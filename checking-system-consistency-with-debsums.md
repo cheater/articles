@@ -1,6 +1,6 @@
 Title: Recovering damaged Linux installations with debsums
 <markdown>
-*Please note: the code listings in this article display completely wrong. In particular some redirects are missing. You can access the full version of this article at my BitBucket. I have emailed Posterous support about this already, hopefully they will respond to this promptly. If this does not happen I will have to consider some other way of posting my articles, and perhaps moving away from Posterous to another service altogether.*
+*Please note: the code listings in this article display completely wrong. In particular some redirects are missing. You can access the [full version of this article at my BitBucket](https://bitbucket.org/cheater/articles/src/tip/checking-system-consistency-with-debsums.md). I have emailed Posterous support about this already, hopefully they will respond to this promptly. If this does not happen I will have to consider some other way of posting my articles, and perhaps moving away from Posterous to another service altogether.*
 
 I have recently been [recovering a broken ext3 file system](http://cheater.posterous.com/automating-e2fsck) with Ubuntu [GNU/Linux](http://stallman.org/) on it. The file system has been repaired and returned to a healthy state, which still did not mean that the files on it and in specific the operating system were in good shape or even that the computer would not erase all its hard disks and explode if I booted from that partition.
 
