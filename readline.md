@@ -60,14 +60,14 @@ The default list of commands in insert mode is a bit shorter than of the *Emacs 
 	"\e": vi-movement-mode
 	"\C-y": yank
 
-In the *command mode*, many of the basic bindings apply, and there are some additions too. Instead of listing them all, I will link you to [an excellent cheat sheet](http://www.catonmat.net/download/bash-vi-editing-mode-cheat-sheet.pdf) by [Peter Krumins](http://www.catonmat.net).
+In the *command mode*, many of the basic bindings apply, and there are some additions too. Instead of listing them all, I will link you to [an excellent cheat sheet](http://www.catonmat.net/download/bash-vi-editing-mode-cheat-sheet.pdf) by [Peteris Krumins](http://www.catonmat.net).
 
 You can edit the current line in your *$EDITOR* by pressing v. By default, this puts you in *vi*; enter commands one per line, and when you exit it (e.g. with *:wq* or *ZZ*) they will be executed. This is great for editing a longer command sequence. The commands get put in the history as separate entries.
 
 The *Vi mode* is not so terrific; the *Emacs mode* is much better.
 
 ### The Emacs-style bindings
-When checking out the bindings for the Emacs mode, note that *\C* is the Control key, and *\e* is the Escape key. However, most of the time pressing Alternative and then a key sends Escape and then that key; so if there's only one *\e* mentioned you can press the Alternative key instead. There's a lot of them, there is even a [PDF cheat-sheet](http://www.catonmat.net/download/readline-emacs-editing-mode-cheat-sheet.pdf) — yet again by Peter Krumins. Not all the bindings are the same for me, though. On a default *bash* on my computer the command named above puts out the following:
+When checking out the bindings for the Emacs mode, note that *\C* is the Control key, and *\e* is the Escape key. However, most of the time pressing Alternative and then a key sends Escape and then that key; so if there's only one *\e* mentioned you can press the Alternative key instead. There's a lot of them, there is even a [PDF cheat-sheet](http://www.catonmat.net/download/readline-emacs-editing-mode-cheat-sheet.pdf) — yet again by Peteris Krumins. Not all the bindings are the same for me, though. On a default *bash* on my computer the command named above puts out the following:
 
 	"\C-g": abort
 	"\C-x\C-g": abort
@@ -210,7 +210,7 @@ Some interesting bindings:
 - *Ctrl-l* which clears the screen — that is, the line you are editing now is placed at the top of the screen, the rest is still in the scrollback.
 
 ### Resources
-I have found the two cool resources for *bash* in conjunction with *readline* to be both from Peter Kumin:
+I have found the two cool resources for *bash* in conjunction with *readline* to be both from Peteris Krumins:
 
 - [Vi mode](http://www.catonmat.net/blog/bash-vi-editing-mode-cheat-sheet/) article,
 - [Emacs mode](http://www.catonmat.net/blog/bash-emacs-editing-mode-cheat-sheet/) article.
