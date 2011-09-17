@@ -53,7 +53,7 @@ This step is basically swapping this partition for the old one. First you need t
 
 	tune2fs -U random /dev/sdd1
 
-In otder to see the *UUIDs* of all partitions you can do the following:
+In order to see the *UUIDs* of all partitions you can do the following:
 
 	fdisk -l | grep -iv swap | awk '$6=="Linux"{print $1}' | while read i; do echo  $(tune2fs -l $i | grep UUID | awk '{print $3}') $i; done | sort
 
