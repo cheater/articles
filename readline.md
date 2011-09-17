@@ -219,6 +219,8 @@ There are also these which go beyond just simple keystrokes and interact with th
 - [A very cool and advanced list of tips](http://www.ukuug.org/events/linux2003/papers/bash_tips/) which could be a bit less terse in style though! I like the tip on expanding history expansion events using *readline*'s *magic-space* option, the tip on *$CDPATH*, as well as the info on *~-* (tip 23).
 - A bit more on *[magic-space](http://mike.hostetlerhome.com/2006/05/18/neat-bash-tricks/)* and how it works.
 
+If an application you are using does not have readline support, you might be able to add it using *[rlwrap](http://utopia.knoware.nl/~hlub/rlwrap/)*. It makes creating a text editor a bash oneliner.
+
 If you would like to program completions for your own application, you can have a gander at the relevant Bash [info pages](http://real-world-systems.com/docs/bash-commandLineEditing.html#Programmable-Completion) and at the *help complete* command. I am not sure how this changes when you are using [bash-completion](http://bash-completion.alioth.debian.org/).
 
 There is a [user manual for Haskeline](http://trac.haskell.org/haskeline/wiki/WikiDocumentation) in wiki format. You can find out more about using *[editline](http://www.thrysoee.dk/editline/)* with the command *[man editrc](http://linux.die.net/man/5/editrc)*. The [Tecla command-line editing library](http://www.astro.caltech.edu/~mcs/tecla/index.html) has fairly extensive [user documentation](http://www.astro.caltech.edu/~mcs/tecla/tecla.html).
