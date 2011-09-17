@@ -53,6 +53,10 @@ This step is basically swapping this partition for the old one. First you need t
 
 	tune2fs -U random /dev/sdd1
 
+In otder to see the *UUIDs* of all partitions you can do the following:
+
+	fdisk -l | grep -iv swap | awk '$6=="Linux"{print $1}' | while read i; do echo  $(tune2fs -l $i | grep UUID | awk '{print $3}') $i; done | sort
+
 It is always a good idea to keep the old partition at least for some time, if you should notice something's broken. I find one month is a good time to figure out this sort of thing. After maybe the first week of intensive use, you can keep the partition as a compressed image.
 
 If your boot loader wasn't set to select the boot partition by *UUID*, then the next step would be to reconfigure the bootloader. I chose to simply reinstall *grub* using the Ubuntu installation disc since that is easy.
