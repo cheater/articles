@@ -21,7 +21,7 @@ This would create no annoying bells when you are using the terminal normally, ei
 ### Bubbles
 Ubuntu has a cool functionality for showing notification bubbles, which doesn't require hacking *gnome-terminal*. You can send them out from scripts using *notify-send(1)*. For example, this is what a compilation could look like:
 
-	make > /dev/null 2>&1 && echo installing > /dev/null 2>&1 && notify-send "Project" "Compilation done."
+	make && make-install && notify-send "Big Project" "Compilation done." || notify-send "Big Project" "Error"
 
 The first string is the *summary* (the heading) and the second, optional one is the *body* of the text.
 
