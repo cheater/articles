@@ -106,7 +106,12 @@ First, edit the file and add your changes, check the bug is fixed. File a bug to
 
 You can then attach the diff to the bug in bugzilla. I believe the bug can also be tagged as having a diff that needs review.
 
+### More fun
+If you thought this was easy, there's [a lot of easy pickings](https://bugzilla.mozilla.org/buglist.cgi?quicksearch=[good%20first%20bug&list_id=1316913) for Firefox and other Mozilla stuff. You can learn a bit about C++ and XUL, put a well known project on your CV, and most importantly feel great about yourself after doing something good for everyone... what is there more to ask for? :)
+
 ## ⁂
 All in all Mozilla's [excellent documentation](https://developer.mozilla.org/) has made all of this an easy ride. You could wish more projects were documented like this. Additionally getting shown some tricks in *gdb* by *newsham* at 3 AM was great too — thanks!
+
+One chap from the Moz team ended up reblogging this — pretty cool to consider they were just now talking about how to improve the provess I described here.
 
 </markdown>
