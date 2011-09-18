@@ -10,15 +10,7 @@ If you like to be driven insane you have sound notifications on. In this case, y
 
 where the *^G* is entered in a special way: you press *Ctrl-V* to enter escaped entry mode and then press *Ctrl-G*. Works in Ubuntu in gnome-terminal.
 
-If, however, you like your peace and quiet (or find that the default bell sound does not harmonize with your favourite esoteric jazz LP) then you might want to rely on visual bells. That doesn't work, though. You would expect the following to hold true:
-
-1. If the window and terminal tab sending the *BEL* are in focus, the terminal background gets flashed.
-1. If the window is in focus but the tab is not, the tab title is made bold and perhaps flashes once, or keeps on flashing -- set it in preferences. Then, if you switch away from the window, the taskbar entry should become bold.
-1. If the window is not in focus, the tab name is made bold and the window entry on the taskbar is also made bold.
-
-Granted, all of those should be subject to user preferences -- there are people who just can't stand this -- but the above are not even implemented *badly*. They are not implemented *at all*. This is not only a problem with *gnome-terminal*: a cursory check shows that it doesn't work with various *rxvt* versions either.
-
-Terminals have always had the functionality to receive bells. Apparently the functionality exists since at least 1870 -- which makes it even funnier that GNOME still doesn't do that properly. 
+If, however, you like your peace and quiet (or find that the default bell sound does not harmonize with your favourite esoteric jazz LP) then you might want to rely on some visual form of bells.
 
 There are [patches](https://bugzilla.gnome.org/show_bug.cgi?id=557593) and a [gnome-terminal PPA]https://launchpad.net/~morethan/+archive/ppa() to do this. The patches have been there since 2008; might as well be 1908, they still aren't applied. Use the PPA if you want this feature, for example for your *irssi* running inside a *screen*. The author of the patch has also [written](http://mikelward.com/news/2008/11/terminal-that-tells-you-when-its-done.html) that you can send out a bell every time you get a new prompt in this way:
 
@@ -60,4 +52,19 @@ Either way, you might find yourself with the popup out of focus and the terminal
 	compile-stuff && echo done. && zenity --info --text "Done!"
 
 This should save you a lot of grief. Have fun!
+
+## ⁂
+
+Unfortunately *gnome-terminal* doesn't really support bells that well. You would expect the following to hold true:
+
+1. If the window and terminal tab sending the *BEL* are in focus, the terminal background gets flashed.
+1. If the window is in focus but the tab is not, the tab title is made bold and perhaps flashes once, or keeps on flashing -- set it in preferences. Then, if you switch away from the window, the taskbar entry should become bold.
+1. If the window is not in focus, the tab name is made bold and the window entry on the taskbar is also made bold.
+
+Granted, all of those should be subject to user preferences -- there are people who just can't stand this -- but the above are not even implemented *badly*.
+
+They are not implemented *at all*. This does not work with *gnome-terminal*: a cursory check shows that it works with various *rxvt* versions; search the *manpage* for *urgentOnBell*. It also works in *xterm(1)*, using either *xterm -pob* (mnemonic: pop on bell) or configuring it -- search the *manpage* for *popOnBell* and *bellIsUrgent*.
+
+Terminals have always had the functionality to receive bells. Apparently the functionality exists since at least 1870 -- which makes it even funnier that GNOME still doesn't do that properly. Yet again *gnome-terminal* proves to be somewhat of a toy compared to other, "more serious" terminals like *xterm* or *rxvt*. Now if configuring them didn't suck so badly..
+
 </markdown>
