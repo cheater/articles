@@ -20,10 +20,14 @@ Granted, all of those should be subject to user preferences -- there are people 
 
 Terminals have always had the functionality to receive bells. Apparently the functionality exists since at least 1870 -- which makes it even funnier that GNOME still doesn't do that properly. 
 
-There are [patches](https://bugzilla.gnome.org/show_bug.cgi?id=557593) and a [gnome-terminal PPA]https://launchpad.net/~morethan/+archive/ppa() to do this. The patches have been there since 2008; might as well be 1908, they still aren't applied. Use the PPA if you want this feature, for example for your *irssi* running inside a *screen*.
+There are [patches](https://bugzilla.gnome.org/show_bug.cgi?id=557593) and a [gnome-terminal PPA]https://launchpad.net/~morethan/+archive/ppa() to do this. The patches have been there since 2008; might as well be 1908, they still aren't applied. Use the PPA if you want this feature, for example for your *irssi* running inside a *screen*. The author of the patch has also [written](http://mikelward.com/news/2008/11/terminal-that-tells-you-when-its-done.html) that you can send out a bell every time you get a new prompt in this way:
+
+	PS1="\\007$PS1"
+
+This would create no annoying bells when you are using the terminal normally, either.
 
 ### Bubbles
-Ubuntu has a cool functionality for showing notification bubbles. You can send them out from scripts using *notify-send(1)*. For example, this is what a compilation could look like:
+Ubuntu has a cool functionality for showing notification bubbles, which doesn't require hacking *gnome-terminal*. You can send them out from scripts using *notify-send(1)*. For example, this is what a compilation could look like:
 
 	make > /dev/null 2>&1 && echo installing > /dev/null 2>&1 && notify-send "Project" "Compilation done."
 
