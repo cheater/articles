@@ -112,6 +112,6 @@ If you thought this was easy, there's [a lot of easy pickings](https://bugzilla.
 ## ⁂
 All in all Mozilla's [excellent documentation](https://developer.mozilla.org/) has made all of this an easy ride. You could wish more projects were documented like this. Additionally getting shown some tricks in *gdb* by *newsham* at 3 AM was great too — thanks!
 
-One chap from the Moz team ended up reblogging this — pretty cool to consider they were just now talking about how to improve the provess I described here.
+One chap from the Moz team ended up [reblogging](http://blog.mozilla.com/dolske/2011/09/18/speaking-of-community/) this — pretty cool to consider they were just now talking about how to improve the provess I described here. Apparently [they are still thinking how to make things better](https://bugzilla.mozilla.org/show_bug.cgi?id=686998). From a business perspective it makes even more sense — you can get new workers up to date very quickly if the thing they will be working on is well-documented. This is yet more important for development teams that are geographically separated and even in very different time-zones.
 
 </markdown>
