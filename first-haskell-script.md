@@ -187,7 +187,7 @@ The above will work too.
 This will, however, not work:
 	#!/usr/bin/env runhaskell
 	main = main >> (getLine >>= putStrLn)
-This is because, when constructing an infinite value (list, tree, etc), we should not recurse infinitely when defining one element of it; here, the first job that main would be doing is defined like that. This is called "head recursion".
+This is because, when constructing an infinite value (list, tree, etc), we should not recurse infinitely when defining one element of it; here, the first job that *main* would be doing is defined like that. This is called "head recursion".
 
 This can be illustrated easier in this way:
 	quiet = quiet ++ "A"
@@ -202,7 +202,7 @@ Let us also comment on our code a bit; at 2 lines it might already be too comple
 	
 	main = iteration >> main
 	-- The main program
-Finally, we can introduce *do* notation; this is a special notation for *IO* which wraps around *>>=* and makes our *IO actions* more legible. This exposes *IO* for what it really is: simulation of a *constructive* language inside the *declarative* language Haskell. We use *do* like thos:
+Finally, we can introduce *do* notation; this is a special notation for *IO* which wraps around *>>=* and makes our *IO actions* more legible. This exposes *IO* for what it really is: simulation of a *constructive* language inside the *declarative* language Haskell. We use *do* like this:
 	#!/usr/bin/env runhaskell
 	iteration = do
 	-- echoes what we type in
@@ -211,14 +211,14 @@ Finally, we can introduce *do* notation; this is a special notation for *IO* whi
 	
 	main = iteration >> main
 	-- The main program
-Notice that we have assignments here with the *<-* operator. This is exactly equivalent to the previous version of *iteration*. The Freenode IRC channel *#haskell* has a very nice bot called *lambdabot* with a few useful commands. You can use them in the channel, on in a query with *lambdabot*. One such command is *@undo*, which we can use to unwrap do notation:
+Notice that we have assignments here with the *<-* operator. This is exactly equivalent to the previous version of *iteration*. The Freenode IRC channel *#haskell* has a very nice bot called *lambdabot* with a few useful commands. You can use them in the channel, or in a query with *lambdabot*. One such command is *@undo*, which we can use to unwrap do notation:
 	@undo iteration = do x <- getLine; putStrLn x
 	iteration = getLine >>= \x -> putStrLn x
 Now to understand this you need to know a bit about lambda calculus. The short version is, that the function:
 	f x = putStrLn x
 can also be expressed as
 	f = \x -> putStrLn x
-Think of *\*, (or *lambda*, or *𝜆* as it is called in other languages) as popping a value off the *argv* in C. Now this is exactly equivalent to:
+Think of *\\*, (or *lambda*, or *𝜆* as it is called in other languages) as popping a value off the *argv* in C. Now the above is exactly equivalent to:
 	f = putStrLn
 since the two functions take the same kinds and numbers of arguments.
 
@@ -254,9 +254,9 @@ Oops! This doesn't quite work as expected. The output we get is:
 	Please enter your name...
 Some of you might have figured out that Haskell only flushes output when a new line is printed; we need to explicitly flush the output with *hFlush*. It is, however, not loaded at startup; we must import the module it is in, *System.IO*:
 	import System.IO
-This makes our namespace messy, though; it dumps all the stuff that's inside System.IO directly into the global context and after ten years we can't figure out what came from where. Instead, let's use a qualifier:
+This makes our namespace messy, though; it dumps all the stuff that's inside System.IO directly into the global context and if we try to go back to source code that does that with umpteens of modules, then, after ten years (or ten weeks), we can't figure out what came from where. Instead, let's use a qualifier:
 	import qualified System.IO as I
-Now, we can use *hFlush*. It takes the stream as a parameter; *System.IO.stdout* is one such stream.
+Now we can use *hFlush*. It takes the stream to flush as a parameter; *System.IO.stdout* is one such stream.
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
@@ -278,7 +278,7 @@ Now, let's make this script react to certain people. First, let's define some na
 	-- This program knows those people
 Then, let's make a function that checks if the person is known:
 	known name = any (== name) known_friends
-The above requires some explanation. First of all, *any* is a function that takes a comparison and a list, and returns a logical value. The comparison should take one parameter, and return a logical value. Second, *(== name)* is a comparison function just like we need; in Haskell, everthing is a function, and so is *==*. We can also manipulate functions using *partial application* (also known as *currying*) in order to get functions of less variables; this way we got from the function *==* which takes two variables to a function which just takes one variable. If we wanted to compare with just one name, we could have also written it like this:
+The above requires some explanation. First of all, the syntax may be confusing. The first word on the line is *known*, the name of the new value (new function). Then come the names of the parameters, if any. Then we have an equals sign (*=*); then comes the code, the body of, the function. Second, *any* is a function that takes a comparison and a list, and returns a logical value. The comparison should take one parameter, and return a logical value. Third, *(== name)* is a comparison function just like we need; in Haskell, everthing is a function, and so is *==*; however, *==* is a function of two parameters, and our comparison needs to take one parameter and evaluate to a truth value. We can manipulate functions using *partial application* (also known as *currying*) in order to get functions of less variables; this way we got from the function *==* which takes two variables to a function which just takes one variable and is called *== name*. If we wanted to compare with just one name, we could have also written it like this:
 	isPhilippa name = "Philippa" == name
 	-- tells us whether a name is equal to "Philippa"
 	philippaKnown = any isPhilippa known_friends
@@ -286,15 +286,15 @@ However, we would want to parametrize:
 	isSomeone someone name = someone == name
 Then, we need to partially apply the function:
 	isPhilippa name = isSomeone "Philippa" name
-What we have just done is created a function called *isPhilippa*, which is *isSomeone* with its first parameter, *someone*, fixed to the value *"Philippa"*. However, this is just the same as:
+What we have just done is to create a function called *isPhilippa*, which is *isSomeone* with its first parameter, *someone*, fixed to the value *"Philippa"*. However, this is just the same as:
 	isPhilippa = isSomeone "Philippa"
 The above version uses so called "point free" syntax; it is used in mathematics to define functions in terms of other functions without actually passing around the point at which those two functions interface. In other words, we can write something like:
 	ctg = 1/tan
-Which has the benefit that, if we use notation saying eg *r* is a real number, and *z* is a complex number, then we'd have to define them first for real numbers:
+Which has the benefit that, if we use notation saying that e.g. *r* is a real number and *z* is a complex number, then we'd have to define the functions first for real numbers:
 	ctg r = 1/(tan r)
-...and then for complex numbers once we figure out how to extend our trigonometric functions to the complex plane:
+...and then for complex numbers, once we figure out how to extend our trigonometric functions to the complex plane:
 	ctg z = 1/(tan z)
-Point-free notation avoids this sort of thing.
+This looks stupid because it's the same thing. Point-free notation avoids this sort of situation.
 
 Now we could use something like that:
 	isSomeone someone name = someone == name
@@ -316,6 +316,8 @@ Now we can parametrize the name:
 	known name = any ((==) name) known_friends
 or just:
 	known name = any (== name) known_friends
+
+Note that, technically, the last line above fixes the second argument, whereas the lines before that fixed the first parameter of *==*. Makes no difference this time around, though.
 
 OK, let's go back to our program. We want it to check if he knows the person in question; and we want it to change the greeting. Here's what we have written until now:
 	#!/usr/bin/env runhaskell
@@ -421,7 +423,7 @@ Now, let's have *iteration* yield a value. The return value of a *do* block is t
 However, Haskell has a special operator for prepending to lists, strings, etc that we can use:
 	    loop (new_friend:friends)
 
-We might just want our program to remember people who it greeted; we can't do that right now because we get the name of the person greeted at the top of the *iteration*, but it needs to be the result of the last line of the *do* block! We therefore need to somehow take that result, called *name*, and make it the result of another computation. For this, we can use the *return* function. It's a method of every *Monad*; in the *IO* monad it's kinda like a *noop* or an *identity function* in that it takes a computation result, and makes it the result of the computation we are definint. Thus, we can do:
+We might just want our program to remember people who it greeted; we can't do that right now because we get the name of the person greeted at the top of the *iteration*, but it needs to be the result of the last line of the *do* block! We therefore need to somehow take that result, called *name*, and make it the result of another computation. For this, we can use the *return* function. It's a method of every *Monad*; in the *IO* monad it's kinda like a *noop* or an *identity function* in that it takes a computation result, and makes it the result of the computation we are defining. Thus, we can do:
 	iteration friends = do
 	    -- Greets someone
 	    putStrLn "Please enter your name..."
@@ -435,7 +437,7 @@ We might just want our program to remember people who it greeted; we can't do th
 ...and our script can now remember us!
 
 ## Using *Just* as out-of-band communication
-Right now our script can add names to the list; however it will add duplicates. We want to prevent this. We could use a sentry value; if that shows up we don't add it. For example: 
+Right now our script can add names to the list; however it will add duplicates. We want to prevent this. We could use a sentinel value; if that shows up we don't add it. For example: 
 	iteration friends = do
 	    -- Greets someone
 	    putStrLn "Please enter your name..."
@@ -458,7 +460,7 @@ Right now our script can add names to the list; however it will add duplicates. 
 	        else loop (new_friend:friends)
 Notice two things. Firstly, we are using *return* inside *then* and *else*. The value being *return*ed percolates up to the *if* and becomes its value; since the *if* is the last thing in our *do* block, it's the return value of the *do* block.
 
-Secondly, notice that we had to wrap the bodies of the *then* and *else* in *do* blocks themselves. The body of a *then* or *else* must be a single value; that value is the resultant value of the whole *if* clause, depending on what branch is chosen. A *do* block is just a single value, which composes multiple values together and exposes them as a single value, which is taken from its last line.
+Secondly, notice that we had to wrap the bodies of the *then* and *else* in *do* blocks themselves. The body of a *then* or *else* must be a single value; that value is the resultant value of the whole *if* clause, depending on what branch is chosen. A *do* block is just a single value; *do* composes multiple values together and exposes the one on the last line as its value.
 
 So, if we are in the *else*, our *return name* bubbles up to the *do* it's immediately inside, then to the *else* that *do* is inside, then to the *if*. Since the *if* is the last ting in the big *do* block, that *return name* bubbles up to that, and finally becomes the return value of *iteration*.
 
@@ -505,9 +507,9 @@ Here is our whole program until now:
 	main = loop known_friends
 	-- The main program
 
-What we are doing here is called "in-band signaling"; this is a term which comes from the world of radio, information theory, and communication. It means selecting a special value of our type, and using it with additional semantics. Naturally, no one will have a name which consists of the empty string; However, it's not so great to use in-band signaling if our values are less predictable; for example, how do we use in-band signaling when returning a number? We could use some huge number, but that breaks when someone uses that specific number; bad idea. Additionally, other programmers who use our function might not be aware of those special semantics; this is expressed tersely by stating that the semantics of a value should be encoded in its type. That is, a number is a number, and a string is a sting. That's all. Finito.
+What we are doing here is called "in-band signaling"; this is a term which comes from the world of radio, information theory, and communication. It means selecting a special value of our type, and using it with additional semantics. Naturally, no one will have a name which consists of the empty string; However, it's not so great to use in-band signaling if our values are less predictable; for example, how do we use in-band signaling when returning a number? We could use some huge number, but that breaks when someone uses that specific number; bad idea. Additionally, other programmers who use our function might not be aware of those special semantics; this is summed up by stating that the semantics of a value should be encoded in its type. That is, a number is a number, and a string is a sting, and that's all. Full stop. Finito.
 
-To do this properly, we can use *oyt-of-band signaling*. In some languages we could throw an exception; Haskell can do that, but let's not do that just yet. We could also return a pair, where the first element is the status, and the second element is the actual value being returned. That's stupid, though. Finally, many languages allow you to return None, Null, or False in place of the string; it's a form of polymorphism. Haskell's functions can only return one type; if they return a string in one place, it has to be a string everywhere else too or the program won't even compile. However, we can create new types in Haskell. One way to create a special type is using *Maybe*.
+To do this properly, we can use *out-of-band signaling*. In some languages we could throw an exception; Haskell can do that, but let's not do that just yet. We could also return a pair, where the first element is the status, and the second element is the actual value being returned. That's stupid, though; what do we return as the actual value if we don't want to return anything? The implementation of our type's semantics could leak out to the user code of the users still keep on relying on *that* as a sentinel value. Finally, many languages allow you to return *None*, *Null*, or *False* in place of the string; it's a form of polymorphism. Haskell's functions can only return one type; if they return a string in one place, it has to be a string everywhere else too or the program won't even compile. The good thing is we can create new types in Haskell. Kinda how classes in many object oriented languages end up being used, except Haskell types don't have the inheritance drama; additionally, they're just as good as *str* in Python or *int* in C++ and aren't second-category citizens like classes in those languages are. One way to create a special type is using the keyword *Maybe*.
 
 Before we go on, let's transform our *loop* function a bit:
 	loop friends = do
@@ -517,9 +519,9 @@ Before we go on, let's transform our *loop* function a bit:
 	    case new_friend of
 	        "" -> loop friends
 	        _ -> loop (new_friend:friends)
-The *case* clause is like a cooler version of *if*; you know it from some *constructive* languages as well. It allows is to match against values; additionally we can do *pattern matching*. The final option has a pattern of *_*. A pattern of the form *x* just matches everything. It is used as a catch-all in case the previous options didn't match. The first case which is matched is used; further cases are not inspected.
+The *case* clause is like a cooler version of *if*; you know it from some *constructive* languages as well. It allows us to have multiple branches and match against values; additionally we can do *pattern matching*. The first case which is matched is used; further cases are not inspected. The final option has a pattern of *_*. A pattern of the form *x* just matches everything. It is used as a catch-all in case the previous options didn't match.
 
-Now let's use *Maybe* to do some out-of-band signaling. There are two out-of-band values for *Maybe*: *Just* and *Nothing*. You use *Just* by making your return value *Just whatever_value*; you use *Nothing* by simply making your value *Nothing*. Using *Nothing* is much like using *Null* in Java, *None* in Python or *0* or *-1* in C. Let's convert *iteration*; our current version is:
+Now let's use *Maybe* to do some out-of-band signaling. There are two out-of-band values for *Maybe*: *Just* and *Nothing*. You use *Just* by making your return value *Just whatever_value*; you use *Nothing* by simply making your return value *Nothing*. Using *Nothing* is much like using *Null* in Java, *None* in Python or *0* or *-1* in C, [but without the problems](http://qconlondon.com/london-2009/presentation/Null+References%3A+The+Billion+Dollar+Mistake). Let's convert *iteration*; our current version is:
 	    if known name friends
 	        then do
 	            putStrLn ("Hello, " ++ name ++ "! How have you been?")
@@ -543,7 +545,7 @@ Our signal has changed, so we need to change not only the place we emit it, but 
 	    case new_friend of
 	        Nothing -> loop friends
 	        Just new_friend -> loop (new_friend:friends)
-Notice two cool things. Firstly, we barely changed anything, but this change gives the compiler the ability to reason about our code in a much more advanced way. Secondly, notice that this time we have made a more involved pattern match; it's *Just new_friend*. It gives us direct access to *new_friend* as a value which we can access. You can match against all sorts of structures which is very powerful; this allows you to extract values that are buried deep inside the value you are unpacking.
+Notice two cool things. Firstly, we barely changed anything, but this change gives the compiler the ability to reason about our code in a much more advanced way. Secondly, notice that this time we have made a more involved pattern match; it's *Just new_friend*. It gives us direct access to *new_friend* as a variable. You can match against all sorts of structures which is very powerful; this allows you to extract values that are buried deep inside the value you are unpacking.
 Here is our whole program until now:
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
@@ -580,7 +582,7 @@ Here is our whole program until now:
 	-- The main program
 
 ## Persistence using *IO* — reading from and writing to files
-So we can make our script learn new friends! However, ever time it starts its brain is reset. Let's try storing that information somewhere. But first, we need to be able to *read* it. You may know Python's *with* keyword; it creates a new context within which e.g. a file handle is available. Haskell has something similar for files; it's called *withFile* and, as everything, it is a function. However, instead of creating a block, or contect, *withFile* takes a callback as an argument, which it then executes with the handle as the parameter to that callback. Before we apply it, let's transform our current code a bit; change:
+So we can make our script learn new friends! However, every time it terminates its brain is reset. Let's try storing that information somewhere. But first, we need to be able to *read* it. You may know Python's *with* keyword; it creates a new context within which e.g. a file handle is available. Haskell has something similar for files; it's called *withFile* and, as everything, it is a function. Instead of creating a block or context, *withFile* takes a callback as an argument, which it then executes with the handle as the parameter to that callback. Before we apply it, let's transform our current code a bit; change:
 	main = loop known_friends
 	-- The main program
 to:
@@ -596,7 +598,7 @@ Not really a change at all. We are still passing *known_friends* to *loop*. If y
 	
 	main = start
 	-- The main program
-Trivial. Now, however, *start* can act as our callback. *withFile* is still in *System.IO* which we import in our script.
+Trivial. Now, however, *start* can act as our callback. We get *withFile* from *System.IO* which we already import in our script.
 	start conf = do
 	-- Initializes the program
 	    friends <- return known_friends
@@ -619,7 +621,7 @@ We are printing the *contents* for debugging purposes. Seems to be working! Try 
 	    print contents
 	    friends <- return known_friends
 	    loop friends
-Now let's use the contents of the file:
+Now, let's use the contents of the file:
 	start conf = do
 	-- Initializes the program
 	    I.hSeek conf I.AbsoluteSeek 0
@@ -627,7 +629,7 @@ Now let's use the contents of the file:
 	    print contents
 	    friends <- return (lines contents)
 	    loop friends
-We have used the *lines* function, which takes a string, and splits it on newlines into a list of strings, which is exactly what we want. We can simplify this:
+We have used the *lines* function, which takes a string, and splits it on newlines into a list of strings. This is exactly what we want. We can simplify our code:
 	start conf = do
 	-- Initializes the program
 	    I.hSeek conf I.AbsoluteSeek 0
@@ -665,7 +667,7 @@ We also need to position the handle correctly; we want it to be at the end, and 
 	    case new_friend of
 	        Nothing -> loop friends conf
 	        Just new_friend -> loop (new_friend:friends) conf
-Oops! [As it turns out](http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#v:hGetContents), the handle is at this point closed already; but we want to keep appending. We need to figure out a different way to get the contents. Let's write a function which takes a handle, and returns all the lines separately in a list:
+Uh-oh, this doesn't work! [As it turns out](http://hackage.haskell.org/packages/archive/base/latest/doc/html/System-IO.html#v:hGetContents), the handle is closed already at this point; this happened in *hGetContents*; but we want to keep appending. We need to figure out a different way to get the contents. Let's write a function which takes a handle, and returns all the lines in a list:
 	parseConf conf = do
 	    -- Parses the config file given a handle.
 	    eof <- I.hIsEOF conf
@@ -675,14 +677,14 @@ Oops! [As it turns out](http://hackage.haskell.org/packages/archive/base/latest/
 	            line <- I.hGetLine conf
 	            rest <- parseConf conf
 	            return (line:rest)
-Let's also make *start* work with the thing:
+Let's also make *start* use the thing:
 	start conf = do
 	-- Initializes the program
 	    I.hSeek conf I.AbsoluteSeek 0
 	    friends <- parseConf conf
 	    print friends
 	    loop friends conf
-That works! Let's go back to hacking *loop*: now we just need to write to the handle and we should be good.
+That works! Let's go back to hacking *loop*: we just need to write to the handle and we should be good.
 	loop friends conf = do
 	-- Loops the whole thing.
 	    I.hSeek conf I.SeekFromEnd 0
