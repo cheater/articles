@@ -118,16 +118,21 @@ Not so in Haskell. In Haskell, you define *what things are*, rather than *how to
 	            (lenghtOf line_segment)
 	            )))
 	
-	circlesAtEnds line_segment = circlesAtPoints(endsOf(line_segment))
-	-- endsOf is just an example, it does not get talked about just like
-	-- line_segment.ends() did not get talked about in the Python code
+	circlesAtEnds line_segment radius =
+	    circlesAtPoints (endsOf line_segment), radius
 	
-	circlesAtPoints (x, y) = (circleAtPoint x, circleAtPoint y)
+	-- endsOf is just an example, it does not get talked about,
+	-- just like line_segment.ends() did not get talked about in
+	-- the Python code
 	
-	lenghtOf line_segment = distance (fst line_segment) (snd line_segment)
+	circlesAtPoints (x, y) r = (circle x r, circle y r)
 	
-	-- it is intuitive what circleAtPoint does, and what intersectionOf and
-	-- lineThrough do; they are not explained in the Python code, either
+	lenghtOf segment =
+	    distance (fst (endsOf segment)) (snd (endsOf segment))
+	
+	-- it is intuitive what circle does, and what intersectionOf
+	-- and lineThrough do; their counterparts are not explained
+	-- in the Python code, either.
 
 This looks very similar to what you would say in analytic geometry:
 	L = l(⋂ {S(P, |line_segment|) : P an end of line_segment})
@@ -137,21 +142,21 @@ This looks very similar to what you would say in analytic geometry:
 	⋂ {E_n} = {x : ∀ n, x ∊ E_n }
 	
 	|segment| = d(x, y) where x and y are ends of segment
-Even without understanding the notation behind analytic geometry, you can look at the Haskell pseudocode above and notice that we have always defined things *in terms of other things*, without *doing* stuff with those other things. See it as the difference between an engineer making a blueprint of how a house should be, and the construction workers laying cement, bricks, and mortar. In the end, as a result, we get a house; the second way is much more long-winded and not really necessary just to demonstrate a house; a blueprint is good for our purposes.
+Even without understanding the mathematical notation, you can look at the Haskell pseudocode above and notice that we have always defined things *in terms of other things*, without *doing* stuff with those other things. See it as the difference between an engineer making a blueprint of how a house should be, and the construction workers laying cement, bricks, and mortar. In the end, as a result, we get a house; the second way is much more long-winded and not really necessary just to demonstrate a house; a blueprint is good for our purposes.
 
 ## Looping stuff
-If we want to repeat this over and over we need something akin to a loop. I can only guess where the name *loop* came from in the stone-age of computing where you wrote your programs in stone tablets — or perforated cards and tape — you could stick the ends of your perforated tape together in order for your *calculating machine* to perform the same action over and over. I remember once tacking together pieces of paper and feeding them to a printer in a loop; the printer transport broke; I assume tape loops would have been a very difficult mechanical contraption which would therefore cost a lot of money and would therefore be very desirable and hailed as the advent of new computing.
+If we want to repeat this over and over we need something akin to a loop. I can only guess where the name *loop* came from in the stone-age of computing where you wrote your programs in stone tablets — or perforated cards and tape. You could probably stick the ends of your perforated tape together in order for your *calculating machine* to perform the same action over and over. I remember once tacking together pieces of paper and feeding them to a printer in a loop; the printer transport broke after several rounds; I assume tape loops would have been a very difficult mechanical contraption which would therefore cost a lot of money and would therefore be very desirable and hailed as the advent of new computing.
 
-To cut on cost you could learn how to *rewind* tape to the beginning; this is much simpler, since the tape does not need to be kept in a loop that requires tension adjustment and a holding cartridge and rollers; you just reverse the direction of the engine (*driver*) in your tape drive, and you run it until you somehow figure out you are back to the beginning of the tape. For example, you can detect this with a mechanical object that is at the beginning of the tape and touches a switch that says "this is it".
+To cut on cost you could learn how to *rewind* tape to the beginning; this is much simpler, since the tape does not need to be kept in a loop that requires tension adjustment and a holding cartridge and rollers; you just reverse the direction of the engine (*driver* — like *graphic card driver*) in your tape drive, and you run it until you somehow figure out you are back to the beginning of the tape. For example, you can detect this with a mechanical object that is at the beginning of the tape and touches a switch that signals "this is it".
 
-Contemporary computers are still operating on tape; it might be billions of times faster than the original, solid-state cache, but it's still tape. This is reflected by languages adhering to this tape logic. Loops in C and Python and Java and even PHP are best illustrated in the best of all such languages, BASIC:
+Contemporary computers still operate on tape; it might be billions of times faster than the original, a solid-state cache, but it's still tape. The file system is a tape, the *RAM* is a tape, the Internet is a tape. This is reflected by languages adhering to this tape logic. Loops in C and Python and Java and PHP are best illustrated in the best of all such languages, BASIC:
 	10    PRINT "HELLO"
 	20    PRINT "I AM A LOOP ITERATION"
 	30    PRINT "I AM DONE, HAVE A NICE DAY!"
 	40    GOTO 10
 Haskell does not have this concept (it has something different, maybe better). Sure, you can have loops in Haskell just like you can have recursion in Python; it's advised against. It's unnatural, and, in the case of Python, it just plain doesn't work. It is unnatural in the same way that using English words when speaking German sounds stupid; in the same way that wearing trousers backwards doesn't work out. You *can* if you want to, but it's still stupid.
 
-Haskell's idea of "things are compositions of other things" works again; instead of a loop instruction, in haskell we define something that repeats itself in this way:
+Haskell's idea of "things are compositions of other things" applies again; instead of a loop instruction, in Haskell we define something that repeats itself in this way:
 	something that repeats is some job plus something that repeats
 Or, to use pseudocode:
 	something_that_repeats = something + something_that_repeats
@@ -187,7 +192,7 @@ The above will work too.
 
 This will, however, not work:
 	#!/usr/bin/env runhaskell
-	main = main >> (getLine >>= putStrLn)
+	main = main >> (getLine >>= putStrLn) -- doesn't work
 This is because, when constructing an infinite value (list, tree, etc), we should not recurse infinitely when defining one element of it; here, the first job that *main* would be doing is defined like that. This is called "head recursion".
 
 This can be illustrated easier in this way:
@@ -197,7 +202,7 @@ What is the first character of *quiet*? We don't really know.
 We can also restructure our program to look more like a loop, in this way:
 	iteration = getLine >>= putStrLn
 	main = iteration >> main
-Let us also comment on our code a bit; at 2 lines it might already be too complex for some to understand:
+Let us also comment on our code a bit; at two lines it might already be too complex for some to understand:
 	iteration = getLine >>= putStrLn
 	-- echoes what we type in
 	
@@ -219,7 +224,7 @@ Now to understand this you need to know a bit about lambda calculus. The short v
 	f x = putStrLn x
 can also be expressed as
 	f = \x -> putStrLn x
-Think of *\\*, (or *lambda*, or *𝜆* as it is called in other languages) as popping a value off the *argv* in C. Now the above is exactly equivalent to:
+Think of *\\*, (or *lambda*, or *𝜆* as it is called in other languages) as unshifting a value off the *argv* in C, COBOL, Python, asm, or PHP. Now the above is exactly equivalent to:
 	f = putStrLn
 since the two functions take the same kinds and numbers of arguments.
 
@@ -247,7 +252,7 @@ This will naturally echo out greetings. The *putStr* function prints out a strin
 	
 	main = iteration >> main
 	-- The main program
-Oops! This doesn't quite work as expected. The output we get is:
+Oops! This doesn't work quite as expected. The output we get is:
 	$ ./guess.hs 
 	Please enter your name...
 	Bob
