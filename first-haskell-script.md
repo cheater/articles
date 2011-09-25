@@ -2,7 +2,13 @@ Title: How to create a Haskell Hello World script, read input, print output, and
 slug: first-haskell-script
 
 <markdown>
-Coming from an agile dev background, I like to do my development in scripts. I don't like the whole process of having to compile my stuff and run it; at least one step too many. Additionally, things that are compiled are not portable. Here's how to create a simple script. This tutorial shows how to do terminal input and output, how to work with output buffering, how to read from and write to files, how to make loops in Haskell and use the *IO monad*. It assumes that you have [installed the Haskell Platform](http://hackage.haskell.org/platform/linux.html). If you're using [Windows](http://hackage.haskell.org/platform/), you might need to change some things (like how the interpreter is invoked). That part of the tutorial is mainly for people using GNU/Linux and similar systems, but the rest of it doesn't change at all because Haskell is very portable.
+Coming from an agile dev background, I like to do my development in scripts. I don't like the whole process of having to compile my stuff and run it; at least one step too many. Additionally, things that are compiled are not portable. Here's how to create a simple script.
+
+This tutorial shows how to create an interpreted script for Haskell, how to do terminal input and output, how to work with output buffering, how to read from and write to files, how to make loops in Haskell and use the *IO monad*.
+
+Seasoned Haskell users might be interested in the notion of *constructive* and *declarative* languages that I introduce.
+
+This tutorial assumes that you have [installed the Haskell Platform](http://hackage.haskell.org/platform/linux.html). If you're using [Windows](http://hackage.haskell.org/platform/), you might need to change some things (like how the interpreter is invoked). That part of the tutorial is mainly for people using GNU/Linux and similar systems, but the rest of it doesn't change at all because Haskell is very portable.
 
 If you are having problems at any time, give the *#haskell* channel on Freenode a go — they're a very helpful bunch and the channel is active all the time. Feel free to drop comments here if something is unclear, wrong, or just doesn't work.
 
@@ -21,7 +27,7 @@ When *runhaskell* is passed a script it looks for the function *main* and execut
 Save that as *hello.hs*, perform *chmod a+x hello.hs* and you're good to go.
 
 ## Variables
-This is the first departure of declarative languages (Haskell, ML) from constructive languages (C, Python). Haskell does not, in general, have variables as you know them from, say, Python. In constructive languages a variable is a *label* which points to a mutable (changeable) cell that points to a value. That's what the Python people mean when they say "Strings are immutable"; in Python:
+This is the first departure of *declarative* languages (Haskell, ML) from *constructive* languages (C, Python) that we notice. Haskell does not, in general, have variables as you know them from, say, Python. In *constructive* languages, a variable is a *label* which points to a mutable (changeable) cell that then points to a value. That's what the Python people mean when they say "Strings are immutable"; in Python:
 	S = "Red"
 	# now, S points to the place in memory where "Red" is stored.
 	S = "Green"
@@ -44,13 +50,13 @@ You can do that with *let*:
 	putStrLn x           -- prints "Red"
 Variables in Haskell come from:
 
-1. global definitions:
+1. Global definitions:
 		x = "Hi"
 	on a line of its own, unindented. This is the most basic scope in Haskell.
-1. function arguments:
+1. Function arguments:
 		hello x = "Hello, " ++ x ++ "!"
 	This also applies to bindings in lambda expressions, the *<-* inside *do*, etc.
-1. *let* and friends:
+1. The keyword *let* and its friends:
 		x = "Hello!"
 		let x = "Good-bye!" in
 		    putStrLn x
@@ -69,7 +75,7 @@ You see, when doing *IO* stuff (that is, Haskell's input-output functionality), 
 the above code does not get a line and then print it; it creates a computer program which gets a line and then prints it. This program is then executed by our faithful *runhaskell*; only at this point do we actually get asked for input.
 
 ## Adding programs together
-We know that *>>=* takes an action and a callback, and returns an action; this callback is not a *real program* in its own right; it lacks semantics. You can also execute two programs one after another using *>>*:
+We know that *>>=* takes a program and a callback, and returns a program; this callback is not a *real program* in its own right; it lacks semantics. You can also make a program out of two programs — execute two programs one after another using *>>*:
 	main = (getLine >>= putStrLn) >> (getLine >>= putStrLn)
 This takes the two programs called "*getLine >>= putStrLn*" and runs them one after another. Basically, *>>* works like this:
 	new_action = old_action_1 >> old_action_2
@@ -78,7 +84,7 @@ The above definition of *main* will ask you for input, print it out, ask you for
 ## Building values
 In Haskell, you create new values by relating them to other values. In Python, you create new values by taking old values and doing things with them. This is the most basic difference between Haskell and Python; or, if we talk about the language families, you can say that this is the most basic difference between *declarative languages* (Haskell, ML, ...) and *constructive* languages (Python, C, ...).
 
-A mathematician will understant this if I say this is like the difference between *synthetic* and *analytic* geometry. Indeed, in *synthetic* geometry you say:
+A mathematician will understant if I say this is like the difference between *synthetic* and *analytic* geometry. Indeed, in *synthetic* geometry you say:
 	10    To get the bisector of a line segment,
 	20    find the first point of the line segment and call it A
 	30    find the second point of the line segment and call it B
