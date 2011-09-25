@@ -2,15 +2,15 @@ Title: How to create a Haskell Hello World script, read input, print output, and
 slug: first-haskell-script
 
 <markdown>
-Coming from an agile dev background, I like to do my development in scripts. I don't like the whole process of having to compile my stuff and run it; at least one step too many. Additionally things that are compiled are not portable. Here's how to create a simple script. This tutorial shows how to do terminal input and output, how to work with output buffering, how to read from and write to files, how to make loops in Haskell and use the *IO monad*. It assumes that you have [installed the Haskell Platform](http://hackage.haskell.org/platform/linux.html). If you're using [Windows](http://hackage.haskell.org/platform/), you might need to change some things (like how the file is interpreted). That part of the tutorial is mainly for people using GNU/Linux and similar systems, but the rest of it doesn't change at all because Haskell is very portable.
+Coming from an agile dev background, I like to do my development in scripts. I don't like the whole process of having to compile my stuff and run it; at least one step too many. Additionally, things that are compiled are not portable. Here's how to create a simple script. This tutorial shows how to do terminal input and output, how to work with output buffering, how to read from and write to files, how to make loops in Haskell and use the *IO monad*. It assumes that you have [installed the Haskell Platform](http://hackage.haskell.org/platform/linux.html). If you're using [Windows](http://hackage.haskell.org/platform/), you might need to change some things (like how the interpreter is invoked). That part of the tutorial is mainly for people using GNU/Linux and similar systems, but the rest of it doesn't change at all because Haskell is very portable.
 
-If you are having problems at any time, give the *#haskell* channel on Freenode a go — they're a very helpful bunch and the channel is active all the time. Feel free to drop comments here if something is unclear or just doesn't work.
+If you are having problems at any time, give the *#haskell* channel on Freenode a go — they're a very helpful bunch and the channel is active all the time. Feel free to drop comments here if something is unclear, wrong, or just doesn't work.
 
 ## The whole shebang
-The GNU/Linux kernel contains an interpreter. It's very simple and simple to write for, it is used for finding the right executor for the executable if it has a shebang. A countably infinite family of quines for the interpreter looks like this:
+The GNU/Linux kernel contains an interpreter. It's very simple and simple to write for, it is used for finding the right executor for the executable if it has a shebang. A [countably infinite](http://en.wikipedia.org/wiki/Cardinal_number) family of quines for the interpreter looks like this:
 	#!/bin/cat
 	(any other stuff here)
-Haskell's interpreter for scripts (at least when using GHC) is called *runhaskell*. You might want to make the shebang *#!/usr/local/bin/runhaskell* but that would be wrong — the executable's location is not guaranteed, and, in fact, it changes loads because people often use a GHC which does not come from their package manager, and use some sort of prefix when installing. There's a trick to this:
+Haskell's interpreter for scripts (at least when using the Haskell Platform) is called *runhaskell*. You might want to make the shebang *#!/usr/local/bin/runhaskell* but that would be wrong — the executable's location is not guaranteed, and, in fact, it changes loads because people often use a Haskell Platform which does not come from their package manager, and use some sort of prefix when installing. There's a trick to this:
 	#!/usr/bin/env your-interpreter
 The above will find the interpreter in *$PATH* and will execute it. So our file initially looks like this:
 	#!/usr/bin/env runhaskell
@@ -18,7 +18,7 @@ The above will find the interpreter in *$PATH* and will execute it. So our file 
 When *runhaskell* is passed a script it looks for the function *main* and executes it. The simplest *hello world* would then look like this:
 	#!/usr/bin/env runhaskell
 	main = putStrLn "Hello, World!"
-Save that as *hello.hs*, *chmod a+x hello.hs* and you're good to go.
+Save that as *hello.hs*, perform *chmod a+x hello.hs* and you're good to go.
 
 ## Variables
 This is the first departure of declarative languages (Haskell, ML) from constructive languages (C, Python). Haskell does not, in general, have variables as you know them from, say, Python. In constructive languages a variable is a *label* which points to a mutable (changeable) cell that points to a value. That's what the Python people mean when they say "Strings are immutable"; in Python:
@@ -30,7 +30,7 @@ This is the first departure of declarative languages (Haskell, ML) from construc
 	# "Green" is stored. However, "Red" might still be stored if
 	# there are other references to it. If S was the last label
 	# for "Red", then "Red" gets dumped from memory.
-In Haskell, you don't overwrite labels like in Python; you can, however, mask them:
+In Haskell, you can't overwrite labels like in Python; you can, however, mask them:
 	(some scope here)
 	    (a block with some of the scope modified)
 	    (more of that block here)
@@ -49,7 +49,7 @@ Variables in Haskell come from:
 	on a line of its own, unindented. This is the most basic scope in Haskell.
 1. function arguments:
 		hello x = "Hello, " ++ x ++ "!"
-	This also applies to bindings in lambda expressions, *<-* inside *do*, etc.
+	This also applies to bindings in lambda expressions, the *<-* inside *do*, etc.
 1. *let* and friends:
 		x = "Hello!"
 		let x = "Good-bye!" in
@@ -59,12 +59,12 @@ Variables in Haskell come from:
 ## Getting input
 Alright, let's make this thing interactive. You can read in stuff with *getLine*:
 	main = getLine >>= putStrLn
-The *>>=* there is a *method* of the *typeclass* called *Monad*. You don't need to understand all that, but what you need to get out of it is that *>>=* can mean different things in different contexts. In our context, we're talking about a specific *>>=* called "the *>>=* of *IO*". *IO*'s *>>=* works like this:
+The *>>=* there, called *bind*, is a *method* of the *typeclass* called *Monad*. You don't need to understand all that, but what you need to get out of it is that *>>=* can mean different things in different contexts. In our context, we're talking about a specific *>>=* called "the *>>=* of *IO*". What you need to know is that *IO*'s *>>=* works like this:
 	new_action = action >>= callback
 That is, *>>=* takes an *action*, executes it, plugs the output into the *callback*, and assigns what came out of that to *new_action*. The previous sentence is a lie.
 
 ## Working with programs here
-You see, when doing *IO* stuff (that is, Haskell's input-output functionality), you are operating on *programs*. And out *action* is one such program which gets executed on runtime; this program can be meshed with other programs to generate other programs. Our line *new_action = action >>= callback* was not actually executing the program called *action*; it just mashed that program with the *callback*, without ever executing it. So, to be more concrete:
+You see, when doing *IO* stuff (that is, Haskell's input-output functionality), you are operating on *programs*. And our *action* is one such program which gets executed on runtime; this program can be meshed with other programs to generate other programs. Our line *new_action = action >>= callback* was not actually executing the program called *action*; it just mashed that program with the *callback*, without ever executing it. The execution happened at runtime, when *runhaskell* got our program and *performed* it, not at compile time. So, to be more concrete:
 	main = getLine >>= putStrLn
 the above code does not get a line and then print it; it creates a computer program which gets a line and then prints it. This program is then executed by our faithful *runhaskell*; only at this point do we actually get asked for input.
 
@@ -76,7 +76,7 @@ This takes the two programs called "*getLine >>= putStrLn*" and runs them one af
 The above definition of *main* will ask you for input, print it out, ask you for input, print it out, and then terminate.
 
 ## Building values
-In Haskell, you create new values by relating them to other values. In Python, you create new values by taking old values and doing things with them. This is the most basic difference between Haskell and Python; or, if we talk about the families, you can say that this is the most basic difference between *declarative languages* (Haskell, ML, ...) and *constructive* languages (Python, C, ...).
+In Haskell, you create new values by relating them to other values. In Python, you create new values by taking old values and doing things with them. This is the most basic difference between Haskell and Python; or, if we talk about the language families, you can say that this is the most basic difference between *declarative languages* (Haskell, ML, ...) and *constructive* languages (Python, C, ...).
 
 A mathematician will understant this if I say this is like the difference between *synthetic* and *analytic* geometry. Indeed, in *synthetic* geometry you say:
 	10    To get the bisector of a line segment,
@@ -90,8 +90,9 @@ A mathematician will understant this if I say this is like the difference betwee
 	90    take another one, call it F
 	100   place a pencil on E
 	110   place a straight edge so that it touches the pencil tip
-	120   watching out that the straight edge stays adjacent to the tip, move it so that it also touches the point F
-	130   draw a line against the straight edge
+	120   watching out that the straight edge stays adjacent to the tip,
+	130       move it so that it also touches the point F
+	140   draw a line against the straight edge
 In Python, it could look like this:
 	def line_bisector(line_segment):
 	    """ Gets you a line bisector.
@@ -423,7 +424,7 @@ Now, let's have *iteration* yield a value. The return value of a *do* block is t
 However, Haskell has a special operator for prepending to lists, strings, etc that we can use:
 	    loop (new_friend:friends)
 
-We might just want our program to remember people who it greeted; we can't do that right now because we get the name of the person greeted at the top of the *iteration*, but it needs to be the result of the last line of the *do* block! We therefore need to somehow take that result, called *name*, and make it the result of another computation. For this, we can use the *return* function. It's a method of every *Monad*; in the *IO* monad it's kinda like a *noop* or an *identity function* in that it takes a computation result, and makes it the result of the computation we are defining. Thus, we can do:
+We might just want our program to remember people who it greeted; we can't do that right now because we get the name of the person greeted at the top of the *iteration*, but it needs to be the result of the last line of the *do* block! We therefore need to somehow take that result, called *name*, and make it the result of another computation. For this, we can use the *return* function. It's a method of every *monad*; in the *IO* monad it's kinda like a *noop* or an *identity function* in that it takes a computation result, and makes it the result of the computation we are defining. Thus, we can do:
 	iteration friends = do
 	    -- Greets someone
 	    putStrLn "Please enter your name..."
