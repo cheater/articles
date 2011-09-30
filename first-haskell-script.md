@@ -72,7 +72,7 @@ That is, *>>=* takes an *action*, executes it, plugs the output into the *callba
 ## Working with programs here
 You see, when doing *IO* stuff (that is, Haskell's input-output functionality), you are operating on *programs*. And our *action* is one such program which gets executed on runtime; this program can be meshed with other programs to generate other programs. Our line *new_action = action >>= callback* was not actually executing the program called *action*; it just mashed that program with the *callback*, without ever executing it. The execution happened at runtime, when *runhaskell* got our program and *performed* it, not at compile time. So, to be more concrete:
 	main = getLine >>= putStrLn
-the above code does not get a line and then print it; it creates a computer program which gets a line and then prints it. This program is then executed by our faithful *runhaskell*; only at this point do we actually get asked for input.
+the above code does not get a line and then print it; it creates a computer program which gets a line and then prints it. This program is then executed by our faithful *runhaskell*; only at this point do we actually get asked for input. The program we write using *IO* is just a description what *could happen*; possibly multiple times (as we will do later on to make "loops") or no times (if, e.g., we end up not executing that specific branch of our application).
 
 ## Adding programs together
 We know that *>>=* takes a program and a callback, and returns a program; this callback is not a *real program* in its own right; it lacks semantics. You can also make a program out of two programs — execute two programs one after another using *>>*:
