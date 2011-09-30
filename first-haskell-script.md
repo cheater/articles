@@ -286,7 +286,7 @@ Now we can use *hFlush*. It takes the stream to flush as a parameter; *System.IO
 This works perfectly!
 
 Now, let's make this script react to certain people. First, let's define some names:
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 Then, let's make a function that checks if the person is known:
 	known name = any (== name) known_friends
@@ -294,7 +294,7 @@ The above requires some explanation. First of all, the syntax may be confusing. 
 	isPhilippa name = "Philippa" == name
 	-- tells us whether a name is equal to "Philippa"
 	philippaKnown = any isPhilippa known_friends
-However, we would want to parametrize:
+However, we would want to parametrize who we are checking for:
 	isSomeone someone name = someone == name
 Then, we need to partially apply the function:
 	isPhilippa name = isSomeone "Philippa" name
@@ -308,7 +308,20 @@ Which has the benefit that, if we use notation saying that e.g. *r* is a real nu
 	ctg z = 1/(tan z)
 This looks stupid because it's the same thing. Point-free notation avoids this sort of situation.
 
-Now we could use something like that:
+Generally, if we have code of the form:
+	some_function param1 param2 last_param = another_function "foo" last_param
+— that is, the past parameter of the left function is passed as the last parameter of the right function — then we can just lop it off both sides. It's kind-of like simplifying equations in mathematics.
+Argument reduction:
+	some_function param1 param2 last_param = another_function "foo" last_param
+	-- is equivalent to:
+	some_function param1 param2 = another_function "foo"
+Multiplicative reduction:
+	sin x * 2 = a*x * 2  -- /divide by 2
+	-- is equivalent to:
+	sin x = a*x
+Argument reduction works only when the argument being removed is the furthest right.
+
+Regarding our functions checking for Philippa, we could now do something like:
 	isSomeone someone name = someone == name
 	isPhilippa = isSomeone "Philippa"
 	philippaKnown = any isPhilippa known_friends
@@ -318,7 +331,7 @@ However, this is just the same as:
 Now, we can rewrite the definition of *isSomeone*:
 	isSomeone someone name = (==) someone name
 	philippaKnown = any (isSomeone "Philippa") known_friends
-This changes *==* from being an *infix operator* to being a normal function. We can now remove a parameter:
+This changes *==* from being an *infix operator* to being a normal function. We can now remove a parameter from the definition, making the code more point-free:
 	isSomeone someone = (==) someone
 And then another one:
 	isSomeone = (==)
@@ -335,7 +348,7 @@ OK, let's go back to our program. We want it to check if he knows the person in 
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name = any (== name) known_friends
@@ -356,7 +369,7 @@ Time to add an *if* clause:
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name = any (== name) known_friends
@@ -388,7 +401,7 @@ Now we need to make *iteration* take *friends* as a parameter, which we will pas
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name friends = any (== name) friends
@@ -488,7 +501,7 @@ Here is our whole program until now:
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name friends = any (== name) friends
@@ -562,7 +575,7 @@ Here is our whole program until now:
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name friends = any (== name) friends
@@ -711,7 +724,7 @@ Give it a try — it works! The program writes to the file and reads back from i
 	#!/usr/bin/env runhaskell
 	import qualified System.IO as I
 	
-	known_friends = ["Don", "Simon", "Eduard"]
+	known_friends = ["Don", "Simon", "Eduard", "Philippa"]
 	-- This program knows those people
 	
 	known name friends = any (== name) friends
