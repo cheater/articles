@@ -16,7 +16,9 @@ The [event](http://groups.google.com/group/bostonhaskell/browse_thread/thread/78
 
 The [second instance](http://cluedumps.mit.edu/wiki/SIPB_Cluedump_Series) of the talk will happen on Tuesday, the 11th of October 2011, again at MIT, in *2-143* (which decrypts to room 143 of building 2 at MIT). The post-talk chat is always involving and always different, so it's worth attending both.
 
-I'll put up slides >>>here<<< when they're out, so check back.
+## SLIDES!!!
+-I'll put up slides >>>here<<< when they're out, so check back.-
+[Slides for Keegan's talk](http://www.ugcs.caltech.edu/~keegan/talks/why-learn-haskell/talk.pdf) are now available!
 
 If you decide to go, please post a reply to the mailing list or as a comment here to signal a rough idea of the head count; just showing up works too, of course.
 
