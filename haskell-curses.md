@@ -3,6 +3,10 @@ slug: haskell-curses
 <markdown>
 I have recently been musing on writing some more involved programs in Haskell that would require a *curses(3)* based UI, and decided to check out the available libraries. There's a deficit in documentation on how to do stuff with them, so I thought I'd share.
 
+This article creates a program with an interactive user interface that displays a list of things, kind of like in an email program or a file manager; it displays a "cursor" by highlighting the line it's on, and allows you to move the selection. When the selection moves to the edge of the screen it scrolls the list.
+
+The same program is developed for *HSCurses*, *NCurses* and *Vty*. In-depth explanations are in the *HSCurses* part, the *NCurses* and *Vty* parts just compare the differences. Currently, *NCurses* looks like the best choice; closely followed by *Vty*. The *HSCurses* library did not perform well enough to suggest its use.
+
 ## Available libraries
 There are three notable packages for Haskell:
 
@@ -1084,7 +1088,7 @@ The code should currently look like this:
 	-- the main program
 
 ## Caveat emptor
-All in all *NCurses* was a much better experience than *HSCurses*. A more functional monadic shell coupled with a more concise set of functions has made this possible. The fact that it works with multibyte characters makes it a much better choice than *HSCurses*. There have been some quirks however: I have encountered some redrawing problems where the highlighted row wasn't being updated if it was scrolling the screen's lower edge. I have been unable to fix this. If you have any ideas, please let me know. Even with the described problem *NCurses* is much better than *HSCurses*.
+All in all *NCurses* was a much better experience than *HSCurses*. A more functional monadic shell coupled with a more concise set of functions has made this possible. The fact that it works with multibyte characters makes it a much better choice than *HSCurses*. There have been some quirks however: I have encountered some redrawing problems where the last row wasn't being updated if the view was scrolling down. One workaround is to ignore the last line and make all your code pretend the terminal is one row shorter; this is not a real fix however. I have been unable to fix this issue. If you have any ideas, please let me know. Even with the described problem *NCurses* is much better than *HSCurses*.
 
 ## *Vty*
 The [vty package](http://hackage.haskell.org/package/vty) is a departure from the *curses* library and tries to do everything on its own. It's structured differently, into many small modules, and uses the concept of "images" and "pictures". Here is a [short description of Vty](http://www.haskell.org/haskellwiki/Library/VTY):
