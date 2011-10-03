@@ -7,6 +7,8 @@ This article creates a program with an interactive user interface that displays 
 
 The same program is developed for *HSCurses*, *NCurses* and *Vty*. In-depth explanations are in the *HSCurses* part, the *NCurses* and *Vty* parts just compare the differences. Currently, *NCurses* looks like the best choice; closely followed by *Vty*. The *HSCurses* library did not perform well enough to suggest its use.
 
+The description of every library has a section called "Caveat emptor" which describes the problems encountered with it.
+
 ## Available libraries
 There are three notable packages for Haskell:
 
