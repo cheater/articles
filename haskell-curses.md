@@ -884,17 +884,9 @@ and making the view scroll with the cursor:
 	        Just (NCurses.EventCharacter c) -> handleKeyboard c position offset2
 	        _ -> return ()
 
-Blanking is not an easy as in *HSCurses*; there's no standard function for blanking the whole screen. Let's write our own:
-	blank win = do
-	-- blanks the screen
-	    (rows, cols) <- NCurses.screenSize
-	    let blankLine = replicate (fromInteger cols) ' '
-	    forM_ [0..(rows - 1)] $ \line ->
-	        drawTextAt win line 0 blankLine
-
-and plug it into *main*:
+Blanking is fairly easy; you just call *NCurses.render* in *main*:
 	    win <- NCurses.defaultWindow
-	    blank win
+	    NCurses.render
 	    forM_ fromages2 $ \(line, cheese) ->
 	        printCheese win (line + offset2) cheese (line == position)
 
@@ -1058,13 +1050,6 @@ The code should currently look like this:
 	    drawTextAt win line 0 $ indicator ++ getName cheese
 	    NCurses.updateWindow win $ NCurses.setColor NCurses.defaultColorID
 	
-	blank win = do
-	-- blanks the screen
-	    (rows, cols) <- NCurses.screenSize
-	    let blankLine = replicate (fromInteger cols) ' '
-	    forM_ [0..(rows - 1)] $ \line ->
-	        drawTextAt win line 0 blankLine
-	
 	handleKeyboard c position offset colorId = case c of
 	-- handles keyboard input
 	    'q' -> return ()
@@ -1085,7 +1070,7 @@ The code should currently look like this:
 	            else offset
 	    let fromages2 = zip [0..] fromages
 	    win <- NCurses.defaultWindow
-	    blank win
+	    NCurses.render
 	    forM_ fromages2 $ \(line, cheese) ->
 	        printCheese win (line + offset2) cheese (line == position) colorId
 	    NCurses.render
@@ -1099,11 +1084,7 @@ The code should currently look like this:
 	-- the main program
 
 ## Caveat emptor
-All in all *NCurses* was a much better experience than *HSCurses*. A more functional monadic shell coupled with a more concise set of functions has made this possible. The fact that it works with multibyte characters makes it a much better choice than *HSCurses*. There have been some quirks however:
-
-1. The lack of a blanking function, even if it's a simple one, was noticeable
-1. I have encountered some redrawing problems where the highlighted row wasn't being updated if it was scrolling the screen's lower edge. I have been unable to fix this. If you have any ideas, please let me know.
-Even with the above problems *NCurses* is much better than *HSCurses*.
+All in all *NCurses* was a much better experience than *HSCurses*. A more functional monadic shell coupled with a more concise set of functions has made this possible. The fact that it works with multibyte characters makes it a much better choice than *HSCurses*. There have been some quirks however: I have encountered some redrawing problems where the highlighted row wasn't being updated if it was scrolling the screen's lower edge. I have been unable to fix this. If you have any ideas, please let me know. Even with the described problem *NCurses* is much better than *HSCurses*.
 
 ## *Vty*
 The [vty package](http://hackage.haskell.org/package/vty) is a departure from the *curses* library and tries to do everything on its own. It's structured differently, into many small modules, and uses the concept of "images" and "pictures". Here is a [short description of Vty](http://www.haskell.org/haskellwiki/Library/VTY):
@@ -1699,14 +1680,14 @@ It might be a *curses* limitation, but it's not acceptable to have the applicati
 Each of the frameworks had its own issues:
 
 - *HSCurses* doesn't feel too Haskellish, has problems with printing characters, and likes to crash; additionally it doesn't export some useful functions from *curses*
-- both *NCurses* and *Vty* are missing a way to blank the screen easily *and* quickly
-- *NCurses* and *Vty* promise more than they actually seem to do
+- *Vty* is missing a way to blank the screen easily *and* quickly
+- *NCurses* and *Vty* feel like they promise more than they actually seem to do
 - *NCurses* and *Vty* only work if the program is compiled
 - all thee frameworks are missing a load of documentation; most importantly ready examples that include every function you might want to use. A function without a usage example is useless, especially given the vastly different APIs that all three try to implement for their more advanced features.
 
-All three are cool; all three have issues that would prevent me from using them in release programs (*HSCurses*' crashiness, *NCurses*' and *Vty*'s blanking behaviour); however, they don't seem to be far off. Work on that guys, and you're golden. Let's have a new Vim clone in Haskell, or something.
+All three are cool; all but *NCurses* issues that would prevent me from using them in release programs (*HSCurses*' crashiness, *Vty*'s blanking behaviour); however, they don't seem to be far off. Work on that guys, and you're golden. Let's have a new Vim clone in Haskell, or something.
 
-I am perfectly aware that the code I am showing here might not be the best; maybe I'm missing some important points as to how things should be done; feel free to comment and show how you would do things! I'm especially interested in how to better blank in *NCurses* and *Vty*, and how to use the drawing options in *Vty* which seem very powerful if you go by the description. It would also be cool to see how you can better use *NCurses* and *Vty* in a more functional way rather than having *do* blocks everywhere like in my code.
+I am perfectly aware that the code I am showing here might not be the best; maybe I'm missing some important points as to how things should be done; feel free to comment and show how you would do things! I'm especially interested in how to better blank in *Vty*, and how to use the drawing options in *Vty* which seem very powerful if you go by the description. It would also be cool to see how you can better use *NCurses* and *Vty* in a more functional way rather than having *do* blocks everywhere like in my code.
 
 # ⁂
 I think *curses* and similar toolkits are pretty cool; there's a lot to be said about complicated interfaces in text-mode terminals. Sure, you can make the next roguelike with those, but you can also use those libraries to facilitate your work, to make interesting, modal, multi-view user interfaces, and to create a user interface that is different the command line and geared specifically for the needs of a niche.
