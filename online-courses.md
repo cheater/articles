@@ -98,6 +98,7 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://pravdu.ru/lessons/petrov/
 * http://www.lectures.edu.ru/map.asp
 * http://www.justiceharvard.org/
+* Bonus: not only university lectures: "The most intellectually stimulating websites": http://www.reddit.com/r/AskReddit/comments/tmtd4/what_are_the_most_intellectually_stimulating/
 
 
 ## ⁂
