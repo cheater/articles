@@ -8,7 +8,7 @@ The following list is ordered roughly by amount and quality of courses. You firs
 
 Anyway, I hope you guys have fun using and abusing this resource. I decided to use URLs only, because they're usually easier to identify than many of the stupid titles the sites on this list have.
 
-Please make sure to comment and tell me if you know any good resources I have missed.
+Please make sure to comment and tell me if you know any good resources I have missed. Also hang out on [irc://irc.freenode.net/#codez](irc.freenode.net #codez) ([http://webchat.freenode.net/?channels=codez](Freenode webchat)) which is a social place for students, people interested in technology, etc. I hope to get some chat going there related to the courses, this way we can figure out what's best.
 
 ### The list
 * http://www.openculture.com/freeonlinecourses
