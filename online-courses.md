@@ -100,7 +100,6 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://www.justiceharvard.org/
 * Bonus: not only university lectures: "The most intellectually stimulating websites": http://www.reddit.com/r/AskReddit/comments/tmtd4/what_are_the_most_intellectually_stimulating/
 
-
 ## ⁂
 ### Education revised
 I am very happy that it's possible to reach such amazing content on the web. I remember when I first heard of MIT OCW — I immediately started browsing, unfortunately both my computer and internet connection at the time sucked so much I was unable to use any of it. Nowadays I can wake up and, while getting out of my bed, eating breakfast, packing for the gym, and grooming, all the time watch Susskind talk about general relativity. I can really immerse myself in study if I want to, and this is great. Studying would have been so much easier had I had this resource in the past! I was a bit disappointed that I couldn't find any good resources with video lecutres in Russian — there are many legendary lectures in mathematics and physics, for example, being given at russian universities. Hopefully time will change that.
