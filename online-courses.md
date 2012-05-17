@@ -28,6 +28,9 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://p2pu.org/en/groups/?all_languages=on&featured=community
 * http://videolectures.net/
 * http://freescienceonline.blogspot.de/
+* http://www.coursera.org/courses
+* http://www.udacity.com/
+* http://www.codecademy.com/learn
 * www.youtube.com/user/StanfordUniversity/videos?view=1
 * www.youtube.com/user/MIT/videos?view=1
 * http://webcast.berkeley.edu/courses.php
