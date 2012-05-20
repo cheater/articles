@@ -15,6 +15,7 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://www.opencontent.org/ocwfinder/
 * www.youtube.com/education?lg=EN&b=1
 * http://www.academicearth.org/
+* http://www.noexcuselist.com/
 * http://www.khanacademy.org/
 * www.youtube.com/user/khanacademy/videos?view=1
 * http://education.ted.com/lessons
