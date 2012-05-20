@@ -22,7 +22,7 @@ So I watched my step. There were a million little rules to obey; I knew none of 
 
 As a newbie, a plebe, a young man lying under all that whale shit, I did what every newbie did: I sidled up to some busy bug without saying a word and became the Invisible Man.
 
-That it was perfectly humiliating was, of course, precisely the point. Sometimes I'd wait for a month before my patch was formally acknowledged; other times, a few hours. Even that seemed like forever. *Who is watching me in my current debased condition?* I'd wonder. *Will I ever recover from such total neglect?* *Will someone please notice that the Invisible Man has arrived?* The contrast between me lurking quietly and the developers's frenetic debate made the scene particularly unbearable. It underlined my uselessness. But once I'd sidled up, it was difficult to leave without first being officially recognized. To leave was to admit defeat in this peculiar ritual of making myself known.
+That it was perfectly humiliating was, of course, precisely the point. Sometimes I'd wait for a month before my patch was formally acknowledged; other times, a few hours. Even that seemed like forever. *Who is watching me in my current debased condition?* I'd wonder. *Will I ever recover from such total neglect?* *Will someone please notice that the Invisible Man has arrived?* The contrast between me lurking quietly and the developers' frenetic debate made the scene particularly unbearable. It underlined my uselessness. But once I'd sidled up, it was difficult to leave without first being officially recognized. To leave was to admit defeat in this peculiar ritual of making myself known.
 
 ####⁂
 
