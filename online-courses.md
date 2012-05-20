@@ -99,6 +99,9 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://pravdu.ru/lessons/petrov/
 * http://www.lectures.edu.ru/map.asp
 * http://www.justiceharvard.org/
+* http://dept.sfcollege.edu/business/susan.crosson/Fall%202007/Flip%20Videos%20Fall%202007/FA%20Videos.htm (financial accounting)
+* http://dept.sfcollege.edu/business/susan.crosson/Fall%202007/YouTube.htm (managerial accounting)
+* http://www.economistsdoitwithmodels.com/economics-classroom/
 * Bonus: not only university lectures: "The most intellectually stimulating websites": http://www.reddit.com/r/AskReddit/comments/tmtd4/what_are_the_most_intellectually_stimulating/
 
 ## ⁂
