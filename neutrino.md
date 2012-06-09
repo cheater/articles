@@ -3,7 +3,7 @@ slug: neutrino
 <markdown>
 So apparently there are some [rumors that Neutrinos don't *do* time](http://www.voanews.com/english/news/science-technology/Fermilab-Scientists-Testing-Faster-Than-Light-Neutrino-Claims-131391688.html). Of course this has already been [refuted in interesting ways](http://www.theregister.co.uk/2011/10/06/opera_and_general_relativity/) and so on, but the [meme](http://johncarlosbaez.wordpress.com/2011/10/05/a-bet-concerning-neutrinos-part-2/) sticks: Neutrinos go back in time!
 
-The Neutrino game plays off that and messed with time. There are already a lot of known games where you have to reverse the order of actions, such as [Sokoban](http://en.wikipedia.org/wiki/Sokoban), [Halma/Chinese Checkers](http://en.wikipedia.org/wiki/Halma), [Braid](http://www.braid-game.com/), and Chess endgames.
+The Neutrino game plays off that and messes with time. There are already a lot of known games where you have to reverse the order of actions, such as [Sokoban](http://en.wikipedia.org/wiki/Sokoban), [Halma/Chinese Checkers](http://en.wikipedia.org/wiki/Halma), [Braid](http://www.braid-game.com/), and Chess endgames.
 
 ## The game
 You decide on order of participants. It's not even that important to keep the order, if someone has a great idea for a move they can "do it", but making sure everyone participates, and that no one dominates the game, can be ensured by sitting in a circle and going in the [positive direction](http://en.wikipedia.org/wiki/Angle#Positive_and_negative_angles), that is counter-clockwise when looking down at the group from the ceiling. The following happens:
