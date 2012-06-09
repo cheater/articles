@@ -16,7 +16,7 @@ However, I think that it is more important than just as a way to make good art. 
 
 I would say that this generalizes to:
 
-*What is the value of what you're doing?*
+> "What is the value of what you're doing?"
 
 This is crucial. A lot of people do things without value, or do not focus on the actual value of what they're doing and let themselves become sidetracked by the whole *ritual of their form*. What I mean by "the ritual of their form" is the often sizeable set of gimmicks you feel forced to tack onto whatever you are making. For example, every website now "needs" Oauth and social network support and other junk. It is not crucial, but it's something everyone feels they need to have. This sort of ritualistic dance happens in every form of output, be it when they create a computer program, a business (we need to be agile! be green! support the community!), a new philosophy, a new movie, a new bicycle, a new mathematics theorem, a new noodle recipe.
 
@@ -30,7 +30,7 @@ I think asking *What is the story your music tells?* is much more accurate. I gu
 
 If I were going to add anything to Pixar's list, it would be this:
 
-*!!!! KEEP A SCRAPBOOK, ASSOCIATE ENTRIES TO THE VALUES (EMOTIONS, THEMES, APPLICATIONS) THEY EVOKE !!!!*
+> !!!! KEEP A SCRAPBOOK, ASSOCIATE ENTRIES TO THE VALUES (EMOTIONS, THEMES, APPLICATIONS) THEY EVOKE !!!!
 
 Yup, all caps, so that you don't scroll past. This was the single thing that boosted my productivity most in the last several years, and it outclasses everything else by very, very far.
 
