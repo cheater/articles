@@ -83,8 +83,11 @@ Please make sure to comment and tell me if you know any good resources I have mi
 * http://www.waseda.jp/ocw/index_e.html
 * http://open.umich.edu/education/schools-colleges
 * http://see.stanford.edu/see/courses.aspx - Stanford Engineering Everywhere
+* http://michaelnielsen.org/blog/quantum-computing-for-the-determined/
+* http://relate.mit.edu/physicscourse/
 * http://scpd.stanford.edu/knuth/index.jsp
 * http://scpd.stanford.edu/engelbart_colloquium/index.jsp
+* http://aduni.org/courses/
 * www.youtube.com/user/UMassEconomics/videos?view=1
 * http://et-tutorials.de/
 * www.youtube.com/user/admUniwersytetSlaski/videos?view=1
