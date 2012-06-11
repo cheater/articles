@@ -13,8 +13,8 @@ The description of every library has a section called "Caveat emptor" which desc
 There are three notable packages for Haskell:
 
 1. *[hscurses](http://hackage.haskell.org/package/hscurses)* which is fairly established and works well. It's somewhat low-level at times, but then that makes it very similar to how you use *curses* in *C*-like languages
-1. *[ncurses](http://hackage.haskell.org/package/ncurses)* — newer than *hscurses* and somewhat higher-level. One downside for me was not being able to run it in interpreted mode, it displayed garbage unless I compiled my program and ran the binary
-1. *[vty](http://hackage.haskell.org/package/vty)*, not as new as Haskell's *ncurses*; a complete rewrite in Haskell, without using the *ncurses(3)* family of libraries. Good for things where *curses* is not available; does not work on [Windows](http://mjg59.dreamwidth.org/5552.html). The best choice in my opinion.
+1. *[ncurses](http://hackage.haskell.org/package/ncurses)* — newer than *hscurses* and somewhat higher-level. One downside for me was not being able to run it in interpreted mode, it displayed garbage unless I compiled my program and ran the binary. Might be the best choice if you want absolute cursor positioning and incremental updates; I'm not sure how you can do this well with *vty*.
+1. *[vty](http://hackage.haskell.org/package/vty)*, not as new as Haskell's *ncurses*; a complete rewrite in Haskell, without using the *ncurses(3)* family of libraries. Good for things where *curses* is not available; does not work on [Windows](http://mjg59.dreamwidth.org/5552.html). The best choice in my opinion for being so insanely easy to create complex UIs with.
 
 ## *HSCurses*
 Let's take a look at HSCurses first. There's a [pretty good tutorial for HSCurses in Japanese](http://d.hatena.ne.jp/itchyny/20110902/1314965062). You can also get an example package called *[hscurses-fish-ex](http://hackage.haskell.org/package/hscurses-fish-ex)* which displays a fish tank and is a sort of tech demo; you can find its source under *~/.cabal/packages/hackage.haskell.org/hscurses-fish-ex/*.
