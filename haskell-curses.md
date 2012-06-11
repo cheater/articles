@@ -1116,18 +1116,14 @@ The [vty package](http://hackage.haskell.org/package/vty) is a departure from th
 > - Minimal support for special keys on terminals other than the linux-console. (F1-5 and arrow keys should work, but anything shifted isn't likely to.)
 > - Uses the TIOCGWINSZ ioctl to find the current window size, which appears to be limited to Linux and BSD.
 
-The *Vty* module suite is much more low-level than *NCurses* or even *HSCurses*. I think it has to be very good for slightly upgrading the visual output of what otherwise is a listing in the terminal — think of colorizing grep output, making a spinner for wget, making progress bars, etc.
+The *Vty* module suite is much easier and seems higher-level than *NCurses* or even *HSCurses*. It can be used to easily make complicated displays, but can also be used in a lower-level way if you want to use *putStrLn* and *hFlush*. I think it has to be very good for slightly upgrading the visual output of what otherwise is a listing in the terminal — think of colorizing grep output, making a spinner for wget, making progress bars, etc.
 
 ## Hello, *Vty*!
-You use Vty with normal Haskell functions. Therefore the simplest "hello world" style program does not use *Vty* at all:
-	#!/usr/bin/env runhaskell
-	module Main where
-	
-	main = do
-	-- the main program
-	    putStrLn "Hello, Vty!"
+Vty has the concept of *Image*s and *Picture*s. Basically an *Image* seems to be the basic unit of graphics (think tiles / sprites), and a *Picture* is sort of like a finalized, rendered full-screen display (think Super Mario on NES).
 
-Let's now make a real "hello world" which puts the terminal in graphic mode and waits for input before terminating:
+Apparently, *Vty*'s idea of graphical output is like this: You use *Graphics.Vty.Picture.pic_for_image* to transform an *Image* into a *Picture*. Finally, you use *Graphics.Vty.update* to print to *Picture* to your terminal.
+
+Let's make a "hello world" which puts the terminal in graphic mode and waits for input before terminating:
 	import qualified Graphics.Vty as Vty
 	
 	main = do
@@ -1138,51 +1134,28 @@ Let's now make a real "hello world" which puts the terminal in graphic mode and 
 	    Vty.next_event vt
 	    Vty.release_terminal t
 
-We can move the cursor with "set_cursor_pos":
+This code is much simpler than in the previous version of this tutorial. The author of *Vty* was very helpful and answered my emails on the same day as I have sent them, which helped substantially in getting the code into shape.
+
+We won't move the cursor to print single lines. Instead, we'll make use of *Vty*'s ability to concatenate *Image* values.
+For those who want to know, we can move the cursor with *set_cursor_pos*:
 	    Vty.set_cursor_pos t 6 2
 It is notable that the coordinates are swapped in comparison to *HSCurses* and *NCurses*.
 
-Now it's time to try and display five messages. Let's write a function which prints at a certain spot; again we have to do some culling and filtering to prevent wrapping. We get the size of the terminal using:
-	Vty.DisplayRegion c r <- Vty.display_bounds term
+*Vty*'s approach of concatenating *Image*s is a major departure from the menial task of moving the cursor and padding that we encountered in *HSCurses* and *NCurses*. I wonder if it's possible to do this in those, too. This approach is great; in a previous version of this blog post, I have been also using cursor-moving to print with *Vty*. After the author, Corey, tipped me off on concatenation, the complete code was reduced by one third, and was much easier and simpler to use — while performing faster and fixing the instability issues I have been experiencing before.
 
-We again add *printHello* and *drawTextAt*:
-	#!/usr/bin/env runhaskell
-	
-	module Main where
-	
-	import qualified Graphics.Vty as Vty
-	import qualified System.IO as I
-	import Control.Monad (when)
-	
-	drawTextAt term y x s = do
-	-- draws text at a specific location
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    when ((y >= 0) && (x >= 0) && (y < rows) && (x < cols)) $ do
-	        let space = cols - x
-	        let s2 = take space s
-	        Vty.set_cursor_pos term (toEnum x) (toEnum y)
-	        putStr s2
-	
-	printHello term line col =
-	-- displays a greeting
-	    drawTextAt term line col "Hello, Vty!"
-	
+We will use the *vert_cat* function which takes a list of *Image*s and creates a single *Image* by gluing them one under another.
 	main = do
+	-- the main program
 	    vt <- Vty.mkVty
-	    t <- Vty.terminal_handle
-	    printHello t 0 0
-	    I.hFlush I.stdout
+	    let image = Vty.string Vty.current_attr "hello, Vty!"
+	    let images = take 5 $ repeat image
+	    let imagesUnified = Vty.vert_cat images
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    Vty.next_event vt
-	    Vty.release_terminal t
+	    Vty.shutdown vt
 
-we can again use *forM_* to structure our loop:
-	    forM_ [0..5] $ \line ->
-	        printHello t line 0
-
-We have to, however, move the flush from *main* to *drawTextAt*; it seems the cursor only moves at a flush:
-	        putStr s2
-	        I.hFlush I.stdout
+No flushing or anything like that required. Just works!
 
 ## Let's again make a list of things
 Everything is better with a bit of french cheese added:
@@ -1239,235 +1212,192 @@ The supporting functions:
 	-- returns the name of a cheese.
 	-- This will become more complicated some day.
 
-	printCheese term line cheese = do
+	fromageImage cheese = do
 	-- prints out info on a cheese
-	    drawTextAt term line 0 $ getName cheese
+	    Vty.string Vty.current_attr $ getName cheese
 
 Plug this into *main*:
 	main = do
-	-- displays cheeses
+	-- the main program
 	    vt <- Vty.mkVty
-	    t <- Vty.terminal_handle
 	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t line cheese
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese)
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    Vty.next_event vt
-	    Vty.release_terminal t
+	    Vty.shutdown vt
 
-Works! Additionally, multibyte characters are displayed as well which is very good.
+Works! Additionally, multibyte characters are displayed as well, which is very good.
 
 ## Interactivity
 In order to have interactivity we first need the ability to mark where we are. Let's give the display a cursor:
-	printCheese term line cheese cursor = do
+	fromageImage cheese cursor = do
 	-- prints out info on a cheese
 	    let indicator = if cursor
 	        then " > "
 	        else "   "
-	    drawTextAt term line 0 $ indicator ++ getName cheese
+	    Vty.string Vty.current_attr $ indicator ++ (getName cheese)
 
 Additionally, we need to change *main*:
-	        printCheese t line cheese False
+	            (\(line, cheese) -> fromageImage cheese False)
 
-Before we go on with the keyboard control we need to set up the allocator; the manual says we should only have one copy of *Vty.Vty* around, otherwise *Vty* will bug out. Additionally, we need to *release_terminal* at the end. Let's do the usual:
+Before we go on with the keyboard control we need to set up the allocator; the manual says we should only have one copy of *Vty.Vty* around, otherwise *Vty* will bug out. Additionally, we need to *shutdown* at the end. Let's do the usual:
 	allocate = do
 	-- sets up Vty
 	    vt <- Vty.mkVty
-	    t <- Vty.terminal_handle
-	    return (vt, t)
+	    return vt
 	
-	deallocate t =
+	deallocate vt =
 	-- frees Vty resouces
-	    Vty.release_terminal t
+	    Vty.shutdown vt
 	
-	work (vt, t) = do
+	work vt = do
 	-- displays cheeses
 	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t line cheese False
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese False)
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    Vty.next_event vt
-	    return t
+	    return vt
 	
 	main = allocate >>= work >>= deallocate
 	-- the main program
 
 Actual keyboard control looks nearly the same as in *HSCurses* and *NCurses*; this time we pattern-match against *EvKey*, which has the nice ability to tell us about the keyboard event and the currently pressed modifiers separately: *EvKey Key [Modifier]*. The *Key* can again be pattern-matched against *KASCII c*. The *handleKeyboard* function is almost exactly the same; the only difference is that *work* has to ultimately return the terminal handle for the *deallocate* function to use:
-	handleKeyboard c (vt, t) = case c of
+	handleKeyboard c vt = case c of
 	-- handles keyboard input
-	    'q' -> return t
-	    _ -> work (vt, t)
+	    'q' -> return vt
+	    _ -> work vt
 	
-	work (vt, t) = do
+	work vt = do
 	-- displays cheeses
 	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t line cheese False
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese False)
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    ev <- Vty.next_event vt
 	    case ev of
-	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c (vt, t)
-	        _ -> return t
+	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c vt
+	        _ -> return vt
 
 Now it's time to make the program display the cursor and respond to keyboard input:
-	handleKeyboard c position (vt, t) = case c of
+	handleKeyboard c position vt = case c of
 	-- handles keyboard input
-	    'q' -> return t
-	    _ -> work ((position + 1) `mod` 10) (vt, t)
+	    'q' -> return vt
+	    _ -> work ((position + 1) `mod` 10) vt
 	
-	work requestedPosition (vt, t) = do
+	work requestedPosition vt = do
 	-- displays cheeses
 	    let position = max 0 (min requestedPosition (length fromages - 1))
 	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t line cheese (line == position)
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese (line == position))
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    ev <- Vty.next_event vt
 	    case ev of
-	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position (vt, t)
-	        _ -> return t
+	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position vt
+	        _ -> return vt
 	
 	main = allocate >>= (work 0) >>= deallocate
 	-- the main program
 
 Making the cursor respond to *j* and *k* is the same, too:
-	handleKeyboard c position (vt, t) = case c of
+	handleKeyboard c position vt = case c of
 	-- handles keyboard input
-	    'q' -> return t
-	    'j' -> work (position + 1) (vt, t)
-	    'k' -> work (position - 1) (vt, t)
-	    _ -> work position (vt, t)
+	    'q' -> return vt
+	    'j' -> work (position + 1) vt
+	    'k' -> work (position - 1) vt
+	    _ -> work position vt
 
 Now it's time to add the ability to scroll. First, add the *offset*:
-	handleKeyboard c position offset (vt, t) = case c of
+	handleKeyboard c position offset vt = case c of
 	-- handles keyboard input
-	    'q' -> return t
-	    'j' -> work (position + 1) offset (vt, t)
-	    'k' -> work (position - 1) offset (vt, t)
-	    _ -> work position offset (vt, t)
+	    'q' -> return vt
+	    'j' -> work (position + 1) offset vt
+	    'k' -> work (position - 1) offset vt
+	    _ -> work position offset vt
 	
-	work requestedPosition offset (vt, t) = do
+	work requestedPosition offset vt = do
 	-- displays cheeses
 	    let position = max 0 (min requestedPosition (length fromages - 1))
-	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t (line + offset) cheese (line == position)
+	    let fromages2 = drop (0 - offset) $ zip [0..] fromages
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese (line == position))
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    ev <- Vty.next_event vt
 	    case ev of
-	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position offset (vt, t)
-	        _ -> return t
+	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position offset vt
+	        _ -> return vt
 	
 	main = allocate >>= (work 0 0) >>= deallocate
 	-- the main program
 
+You can plug in *(work 0 (-1))* to see the *offset* in action.
+
 Then, the ability to move the view with the cursor is added as expected:
-	work requestedPosition offset (vt, t) = do
+	work requestedPosition offset vt = do
 	-- displays cheeses
 	    let position = max 0 (min requestedPosition (length fromages - 1))
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds t
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
+	    Vty.DisplayRegion cols rows <- (Vty.terminal_handle >>= Vty.display_bounds)
+	    let (cols2, rows2) = (fromEnum cols, fromEnum rows)
 	    let screenPosition = position + offset
-	    let offset2 = if screenPosition >= rows
-	        then offset - (screenPosition - rows + 1)
+	    let offset2 = if screenPosition >= rows2
+	        then offset - (screenPosition - rows2 + 1)
 	        else if screenPosition < 0
 	            then offset - screenPosition
 	            else offset
-	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t (line + offset2) cheese (line == position)
+	    let fromages2 = drop (0 - offset2) $ zip [0..] fromages
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese (line == position))
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    ev <- Vty.next_event vt
 	    case ev of
-	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position offset2 (vt, t)
-	        _ -> return t
+	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position offset2 vt
+	        _ -> return vt
 
-We need to blank the screen; *Vty* does not have a ready facility for that. I have tried writing one with *Vty*'s fills, but that didn't seem to do anything:
-	blank vt term = do
-	-- blanks the screen
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let fill = Vty.char_fill Vty.current_attr ' ' cols2 rows2
-	    Vty.update vt (Vty.pic_for_image fill)
-
-...so I have gone the other way:
-	blank vt term = do
-	-- blanks the screen
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    let blankLine = replicate cols ' '
-	    forM_ [0..(rows - 1)] $ \line ->
-	        drawTextAt term line 0 blankLine
-
-Naturally, that's not going to perform just as well; it creates blinking just like when we did that with *NCurses*.
+Unlike in *NCurses*, no blanking is required.
 
 ## Colors
-Usage of colors in *Vty* is fairly easy; no need to define color pairs or anything like that. You can use the *Graphics.Vty.Inline* module in order to change character style. According to the authors of *Vty*, "Seriously, terminal color support is INSANE."
+Usage of colors in *Vty* is fairly easy; no need to define color pairs or anything like that. You can use the *Graphics.Vty.Attributes* module in order to change character style. Since all submodules seem to get reimported into *Graphics.Vty*, we can just use that. According to the authors of *Vty*: "Seriously, terminal color support is INSANE."
 
-I have first tried to do something like this:
-	import qualified Graphics.Vty.Inline as VtyI
-	(...)
-	printCheese term line cheese cursor = do
+We can control colors by changing the *Attr* value being passed to *string*. Nicely enough, no padding is required! We can change the colors by using *with_fore_color* and *with_back_color*:
+	fromageImage cheese cursor = do
 	-- prints out info on a cheese
-	    let (indicator, useColor) = if cursor
-	        then (" > ", True)
-	        else ("   ", False)
-	    when useColor $ VtyI.put_attr_change term $ do
-	            VtyI.fore_color Vty.black
-	            VtyI.back_color Vty.white
-	    drawTextAt term line 0 $ indicator ++ getName cheese
-	    VtyI.put_attr_change term $ VtyI.default_all
-This, however, did not work as expected: the coloring started at the *end of the previous line*, i.e. where the cursor had been before moving to a new line and printing. We need to pass our color-changing routine as a parameter to *drawTextAt* instead:
-	drawTextAt term y x s attr = do
-	-- draws text at a specific location
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    when ((y >= 0) && (x >= 0) && (y < rows) && (x < cols)) $ do
-	        let space = cols - x
-	        let s2 = take space s
-	        Vty.set_cursor_pos term (toEnum x) (toEnum y)
-	        case attr of
-	            Nothing -> return()
-	            Just f -> VtyI.put_attr_change term f
-	        putStr s2
-	        VtyI.put_attr_change term $ VtyI.default_all
-	        I.hFlush I.stdout
-	
-	invertedStyle = do
-	-- inverts the text
-	    VtyI.fore_color Vty.black
-	    VtyI.back_color Vty.white
-	
-	printCheese term line cheese cursor = do
-	-- prints out info on a cheese
+	    let wfc = Vty.with_fore_color
+	    let wbc = Vty.with_back_color
 	    let (indicator, useColor) = if cursor
 	        then (" > ", True)
 	        else ("   ", False)
 	    let attr = if useColor
-	        then Just invertedStyle
-	        else Nothing
-	    drawTextAt term line 0 (indicator ++ (getName cheese)) attr
+	        then Vty.current_attr `wfc` Vty.black `wbc` Vty.white
+	        else Vty.current_attr `wfc` Vty.white `wbc` Vty.black
+	    Vty.string attr $ indicator ++ (getName cheese)
 
-We can now make the selection wider. I have been unable to print two lines on top of each other; it seemed like the last thing I printed "won". I think *Vty* might be moving the cursor by printing spaces, or something like that. I have instead opted to augument the current string by spaces. Note that this might break if you use double-width characters. Good thing [chou dofu](http://eatingasia.typepad.com/eatingasia/2006/09/chinese_cheese.html) is not an actual cheese. I have changed the *printCheese* function like this:
-	printCheese term line cheese cursor = do
-	-- prints out info on a cheese
-	    let (indicator, useColor) = if cursor
-	        then (" > ", True)
-	        else ("   ", False)
-	    let attr = if useColor
-	        then Just invertedStyle
-	        else Nothing
-	    let output = indicator ++ (getName cheese)
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    let blank = if useColor
-	        then replicate (cols - (length output)) ' '
-	        else ""
-	    drawTextAt term line 0 (output ++ blank) attr
+
 
 This is what the code should look like now:
 	#!/usr/bin/env runhaskell
 	
 	module Main where
 	import qualified Graphics.Vty as Vty
-	import qualified Graphics.Vty.Inline as VtyI
-	import qualified System.IO as I
-	import Control.Monad (forM_, when)
-	
-	import qualified Data.Typeable as T
 	
 	fromages =
 	    [ "Abondance de Savoie - 1990"
@@ -1517,187 +1447,86 @@ This is what the code should look like now:
 	    , "Valençay - 1998"
 	    ]
 	
+	
 	getName cheese = cheese
 	-- returns the name of a cheese.
 	-- This will become more complicated some day.
 	
-	drawTextAt term y x s attr = do
-	-- draws text at a specific location
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    when ((y >= 0) && (x >= 0) && (y < rows) && (x < cols)) $ do
-	        let space = cols - x
-	        let s2 = take space s
-	        Vty.set_cursor_pos term (toEnum x) (toEnum y)
-	        case attr of
-	            Nothing -> return()
-	            Just f -> VtyI.put_attr_change term f
-	        putStr s2
-	        VtyI.put_attr_change term $ VtyI.default_all
-	        I.hFlush I.stdout
-	
-	blank vt term = do
-	-- blanks the screen
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    let blankLine = replicate cols ' '
-	    forM_ [0..(rows - 1)] $ \line ->
-	        drawTextAt term line 0 blankLine Nothing
-	
-	invertedStyle = do
-	-- inverts the text
-	    VtyI.fore_color Vty.black
-	    VtyI.back_color Vty.white
-	
-	printCheese term line cheese cursor = do
+	fromageImage cheese cursor = do
 	-- prints out info on a cheese
+	    let wfc = Vty.with_fore_color
+	    let wbc = Vty.with_back_color
 	    let (indicator, useColor) = if cursor
 	        then (" > ", True)
 	        else ("   ", False)
 	    let attr = if useColor
-	        then Just invertedStyle
-	        else Nothing
-	    let output = indicator ++ (getName cheese)
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds term
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
-	    let blank = if useColor
-	        then replicate (cols - (length output)) ' '
-	        else ""
-	    drawTextAt term line 0 (output ++ blank) attr
+	        then Vty.current_attr `wfc` Vty.black `wbc` Vty.white
+	        else Vty.current_attr `wfc` Vty.white `wbc` Vty.black
+	    Vty.string attr $ indicator ++ (getName cheese)
 	
 	allocate = do
 	-- sets up Vty
 	    vt <- Vty.mkVty
-	    t <- Vty.terminal_handle
-	    return (vt, t)
+	    return vt
 	
-	deallocate t =
+	deallocate vt =
 	-- frees Vty resouces
-	    Vty.release_terminal t
+	    Vty.shutdown vt
 	
-	handleKeyboard c position offset (vt, t) = case c of
+	handleKeyboard c position offset vt = case c of
 	-- handles keyboard input
-	    'q' -> return t
-	    'j' -> work (position + 1) offset (vt, t)
-	    'k' -> work (position - 1) offset (vt, t)
-	    _ -> work position offset (vt, t)
+	    'q' -> return vt
+	    'j' -> work (position + 1) offset vt
+	    'k' -> work (position - 1) offset vt
+	    _ -> work position offset vt
 	
-	work requestedPosition offset (vt, t) = do
+	work requestedPosition offset vt = do
 	-- displays cheeses
 	    let position = max 0 (min requestedPosition (length fromages - 1))
-	    Vty.DisplayRegion cols2 rows2 <- Vty.display_bounds t
-	    let (cols, rows) = (fromEnum cols2, fromEnum rows2)
+	    Vty.DisplayRegion cols rows <- (Vty.terminal_handle >>= Vty.display_bounds)
+	    let (cols2, rows2) = (fromEnum cols, fromEnum rows)
 	    let screenPosition = position + offset
-	    let offset2 = if screenPosition >= rows
-	        then offset - (screenPosition - rows + 1)
+	    let offset2 = if screenPosition >= rows2
+	        then offset - (screenPosition - rows2 + 1)
 	        else if screenPosition < 0
 	            then offset - screenPosition
 	            else offset
-	    blank vt t
-	    let fromages2 = zip [0..] fromages
-	    forM_ fromages2 $ \(line, cheese) ->
-	        printCheese t (line + offset2) cheese (line == position)
+	    let fromages2 = drop (0 - offset2) $ zip [0..] fromages
+	    let fromagesImages = map
+	            (\(line, cheese) -> fromageImage cheese (line == position))
+	            fromages2
+	    let imagesUnified = Vty.vert_cat fromagesImages
+	    let pic = Vty.pic_for_image $ imagesUnified
+	    Vty.update vt pic
 	    ev <- Vty.next_event vt
 	    case ev of
-	        Vty.EvKey (Vty.KASCII c) [] ->
-	            handleKeyboard c position offset2 (vt, t)
-	        _ -> return t
+	        Vty.EvKey (Vty.KASCII c) [] -> handleKeyboard c position offset2 vt
+	        _ -> return vt
 	
 	main = allocate >>= (work 0 0) >>= deallocate
 	-- the main program
 
 ## Caveat emptor
-The *Vty* module was a breeze to use. One problem was that its drawing functions — that is, anything that has to do with the *Image* or *Picture* types — just don't seem to work for me. I couldn't get them to work, they were eating output or just not doing anything. The failed attempt at *blank* above is one of those things; here's another example of *Vty*'s weirdness:
-	#!/usr/bin/env runhaskell
-	
-	module Main where
-	import qualified Graphics.Vty as Vty
-	
-	main = do
-	    vt <- Vty.mkVty
-	    t <- Vty.terminal_handle
-	    Vty.DisplayRegion w h <- Vty.display_bounds t
-	    print w
-	    print h
-	    -- outputs "hi there"
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "hello", Vty.string Vty.current_attr "hi there"]
-	    --
-	    -- outputs hello
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "hello", Vty.string Vty.current_attr "hello"]
-	    --
-	    -- outputs nothing
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "hello", Vty.empty_image]
-	    --
-	    -- outputs nothing
-	    -- let i = Vty.vert_cat [Vty.empty_image, Vty.string Vty.current_attr "hello"]
-	    --
-	    -- outputs nothing
-	    -- let i = Vty.string Vty.current_attr "hello"
-	    --
-	    -- outputs "hello2<NL>hello3":
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "hello", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    -- 
-	    -- outputs "hello3":
-	    -- let i = Vty.vert_cat [Vty.empty_image, Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    --
-	    -- outputs "hello3":
-	    -- let i = Vty.vert_cat [Vty.empty_image, Vty.empty_image, Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    -- 
-	    -- outputs "hello3":
-	    -- let i = Vty.vert_cat [Vty.empty_image, Vty.empty_image, Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3", Vty.empty_image, Vty.empty_image, Vty.empty_image, Vty.empty_image]
-	    --
-	    -- outputs "hello3":
-	    let i = Vty.vert_cat [Vty.string Vty.current_attr "", Vty.string Vty.current_attr "", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    --
-	    -- outputs "a<NL>hello2<NL>hello3":
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    --
-	    -- outputs "b<NL>hello2<NL>hello3":
-	    let i = Vty.vert_cat [Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "b", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	
-	    let p = Vty.pic_for_image i
-	    Vty.update vt p
-	
-	    -- after the first update, let's do the same again:
-	    --
-	    -- outputs "a<NL>hello2<NL>hello2"
-	    -- let i = Vty.vert_cat [Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	    -- 
-	    -- outputs "a<NL>a<NL>hello2<NL>hello3"
-	    let i = Vty.vert_cat [Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "a", Vty.string Vty.current_attr "hello2", Vty.string Vty.current_attr "hello3"]
-	
-	    let p = Vty.pic_for_image i
-	    Vty.update vt p
-	
-	    
-	    return ()
-
-Apparently, *Vty*'s idea of graphical output is like this:
-
-You use *Graphics.Vty.Picture.pic_for_image* to transform an *Image* into a *Picture*. Finally, you use *Graphics.Vty.Terminal.output_picture* to print to *Picture* to a *DisplayHandle*. 
-
-You get a *DisplayHandle* from a *DisplayRegion* and *TerminalHandle* using *display_context*; you get a *TerminalHandle* using *Graphics.Vty.Terminal.terminal_handle* and release it with *release_terminal*. You get a *DisplayRegion* using *display_bounds* apparently.
-
-This is a great idea, but it just didn't *work for me*. I'm curious as to how it turns out in practice; if anyone knows what I've been doing wrong, or if *Vty* was just broken and if there's a fix, then please let me know via the comments.
+This will be the only module where I only have *superlatives* to put in here. The *Vty* module was a breeze to use. My problem was that I couldn't figure out its drawing functions — that is, anything that has to do with the *Image* or *Picture* types. Just didn't seem to work for me, they were eating output or just not doing anything. However, after a quick (and *immediate*!) email exchange with Corey O'Connor, I have figured out what to do. I cannot stress enough how important it is to have such great support from the authors! Corey was really helpful and was invaluable in making this blog post into something which can be recommended to *Vty* users.
 
 ## In the end...
-I think that both *NCurses* and *Vty* are pretty cool. Turns out *HSCurses* is unusable unless the multibyte character problems are fixed.
+I think that both *Vty* is pretty cool. *NCurses* is next up, but it can't match *Vty* in terms of usability. Turns out *HSCurses* is unusable unless the multibyte character problems are fixed.
 
 It might be a *curses* limitation, but it's not acceptable to have the application crashing when output is being done outside of the terminal. A safety net should be in place for this situation. In my experience *Vty* performed best there, simply stopping the cursor at the border.
 
 Each of the frameworks had its own issues:
 
+- *Vty* is missing a simple walkthrough; hopefully this blog post will suffice.
 - *HSCurses* doesn't feel too Haskellish, has problems with printing characters, and likes to crash; additionally it doesn't export some useful functions from *curses*
-- *Vty* is missing a way to blank the screen easily *and* quickly
-- *NCurses* and *Vty* feel like they promise more than they actually seem to do
-- *NCurses* and *Vty* only work if the program is compiled
-- all thee frameworks are missing a load of documentation; most importantly ready examples that include every function you might want to use. A function without a usage example is useless, especially given the vastly different APIs that all three try to implement for their more advanced features.
+- *NCurses* feels like they promise more than they actually seem to do
+- *NCurses* only works if the program is compiled
+- all thee frameworks are missing a load of documentation; most importantly ready examples that include every function you might want to use. A function without usage examples is useless, especially given the vastly different APIs that all three try to implement for their more advanced features.
 
-All three are cool; all but *NCurses* issues that would prevent me from using them in release programs (*HSCurses*' crashiness, *Vty*'s blanking behaviour); however, they don't seem to be far off. Work on that guys, and you're golden. Let's have a new Vim clone in Haskell, or something.
+All three are cool; *HSCurses* had issues that would prevent me from using them in release programs (the crashiness). Work on that guys, and you're golden. Let's have a new Vim clone in Haskell, or something.
 
-I am perfectly aware that the code I am showing here might not be the best; maybe I'm missing some important points as to how things should be done; feel free to comment and show how you would do things! I'm especially interested in how to better blank in *Vty*, and how to use the drawing options in *Vty* which seem very powerful if you go by the description. It would also be cool to see how you can better use *NCurses* and *Vty* in a more functional way rather than having *do* blocks everywhere like in my code.
+I am perfectly aware that the code I am showing here might not be the best; maybe I'm missing some important points as to how things should be done; feel free to comment and show how you would do things! It would be cool to see how you can better use *NCurses* and *Vty* in a more functional way rather than having *do* blocks everywhere like in my code.
 
 # ⁂
-I think *curses* and similar toolkits are pretty cool; there's a lot to be said about complicated interfaces in text-mode terminals. Sure, you can make the next roguelike with those, but you can also use those libraries to facilitate your work, to make interesting, modal, multi-view user interfaces, and to create a user interface that is different the command line and geared specifically for the needs of a niche.
+I think *curses* and similar toolkits are pretty cool; there's a lot to be said about complicated interfaces in text-mode terminals. Sure, you can make the next roguelike with those, but you can also use those libraries to facilitate your work, to make interesting, modal, multi-view user interfaces, and to create a user interface that is different from the command line and geared specifically for the needs of a niche.
 
 </markdown>
