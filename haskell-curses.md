@@ -1108,13 +1108,13 @@ The [vty package](http://hackage.haskell.org/package/vty) is a departure from th
 > - Extensive color scheme support: background colors, default colors, reverse-video, bold, underline, half-bright, and blinking attributes.
 > - Unicode characters on output, automatically setting and resetting UTF-8 mode (beware double width and combining characters!)
 > - Disables ISIG and IXOFF, allowing C-q, C-s, C-c, C-z, and C-\ to be received as input.
-> - Interface is designed for relatively easy compatible extension. 
+> - Interface is designed for relatively easy compatible extension.
 > 
 > Current disadvantages:
 > 
 > - No current support for non-ANSI terminals.
 > - Minimal support for special keys on terminals other than the linux-console. (F1-5 and arrow keys should work, but anything shifted isn't likely to.)
-> - Uses the TIOCGWINSZ ioctl to find the current window size, which appears to be limited to Linux and *BSD. 
+> - Uses the TIOCGWINSZ ioctl to find the current window size, which appears to be limited to Linux and BSD.
 
 The *Vty* module suite is much more low-level than *NCurses* or even *HSCurses*. I think it has to be very good for slightly upgrading the visual output of what otherwise is a listing in the terminal — think of colorizing grep output, making a spinner for wget, making progress bars, etc.
 
