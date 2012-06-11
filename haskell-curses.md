@@ -1121,7 +1121,7 @@ The *Vty* module suite is much easier and seems higher-level than *NCurses* or e
 ## Hello, *Vty*!
 Vty has the concept of *Image*s and *Picture*s. Basically an *Image* seems to be the basic unit of graphics (think tiles / sprites), and a *Picture* is sort of like a finalized, rendered full-screen display (think Super Mario on NES).
 
-Apparently, *Vty*'s idea of graphical output is like this: You use *Graphics.Vty.Picture.pic_for_image* to transform an *Image* into a *Picture*. Finally, you use *Graphics.Vty.update* to print to *Picture* to your terminal.
+Apparently, *Vty*'s idea of graphical output is like this: you use *Graphics.Vty.Picture.pic_for_image* to transform an *Image* into a *Picture*. Finally, you use *Graphics.Vty.update* to print to *Picture* to your terminal.
 
 Let's make a "hello world" which puts the terminal in graphic mode and waits for input before terminating:
 	import qualified Graphics.Vty as Vty
