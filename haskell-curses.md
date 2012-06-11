@@ -5,16 +5,16 @@ I have recently been musing on writing some more involved programs in Haskell th
 
 This article creates a program with an interactive user interface that displays a list of things, kind of like in an email program or a file manager; it displays a "cursor" by highlighting the line it's on, and allows you to move the selection. When the selection moves to the edge of the screen it scrolls the list.
 
-The same program is developed for *HSCurses*, *NCurses* and *Vty*. In-depth explanations are in the *HSCurses* part, the *NCurses* and *Vty* parts just compare the differences. Currently, *NCurses* looks like the best choice; closely followed by *Vty*. The *HSCurses* library did not perform well enough to suggest its use.
+The same program is developed for *HSCurses*, *NCurses* and *Vty*. In-depth explanations are in the *HSCurses* part, the *NCurses* and *Vty* parts just compare the differences. Currently, *Vty* looks like the best choice; followed not-so-closely by *NCurses*. The *HSCurses* library did not perform well enough to suggest its use.
 
-The description of every library has a section called "Caveat emptor" which describes the problems encountered with it.
+The description of every library has a section called "Caveat emptor" which describes the problems encountered with it; *Vty* does not have any.
 
 ## Available libraries
 There are three notable packages for Haskell:
 
 1. *[hscurses](http://hackage.haskell.org/package/hscurses)* which is fairly established and works well. It's somewhat low-level at times, but then that makes it very similar to how you use *curses* in *C*-like languages
 1. *[ncurses](http://hackage.haskell.org/package/ncurses)* — newer than *hscurses* and somewhat higher-level. One downside for me was not being able to run it in interpreted mode, it displayed garbage unless I compiled my program and ran the binary
-1. *[Vty](http://hackage.haskell.org/package/vty)*, not as new as Haskell's *ncurses*; a complete rewrite in Haskell, without using the *ncurses(3)* family of libraries. Good for things where *curses* is not available; does not work on [Windows](http://mjg59.dreamwidth.org/5552.html).
+1. *[vty](http://hackage.haskell.org/package/vty)*, not as new as Haskell's *ncurses*; a complete rewrite in Haskell, without using the *ncurses(3)* family of libraries. Good for things where *curses* is not available; does not work on [Windows](http://mjg59.dreamwidth.org/5552.html). The best choice in my opinion.
 
 ## *HSCurses*
 Let's take a look at HSCurses first. There's a [pretty good tutorial for HSCurses in Japanese](http://d.hatena.ne.jp/itchyny/20110902/1314965062). You can also get an example package called *[hscurses-fish-ex](http://hackage.haskell.org/package/hscurses-fish-ex)* which displays a fish tank and is a sort of tech demo; you can find its source under *~/.cabal/packages/hackage.haskell.org/hscurses-fish-ex/*.
