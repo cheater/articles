@@ -1128,6 +1128,8 @@ You use Vty with normal Haskell functions. Therefore the simplest "hello world" 
 	    putStrLn "Hello, Vty!"
 
 Let's now make a real "hello world" which puts the terminal in graphic mode and waits for input before terminating:
+	import qualified Graphics.Vty as Vty
+	
 	main = do
 	-- the main program
 	    vt <- Vty.mkVty
