@@ -11,7 +11,7 @@ I really like Haskell and there are a few things that I would love to see in it 
 
 You could probably give type hints about the auto value, e.g. `map (auto :: _ -> Bool) myList`
 
-You could probably also have some smart sort of "auto via" like "deriving via", but i don't know what the best design for that would be.
+You could probably also have some smart sort of "auto via" like "deriving via", but I don't know what the best design for that would be.
 
 In addition to free theorems, this could be a very useful tool for Haskell development.
 
@@ -122,7 +122,9 @@ I would like to be able to reason about the amount of memory copies a certain pi
 Being able to reason using the Haskell type system is great. But it is not the only kind of judgment we should be able to make about our code. There are other types of judgments we would like to make:
 
 
-## 1. what is the time complexity of the function? For example, take this:
+## 1. What is the time complexity of the function?
+
+For example, take this:
 
 ```
 sort :: [a] -> [a] -- doesn't tell us much about performance
@@ -131,13 +133,13 @@ sort xs = ...
 
 ```
 sort :: [a] -> [a]
-sort :: n -> LessEqO (n * Log n) -- tells us what we need to know
+sort :: n -> LessEqO (n * Log n) -- tells us what we need to know: time complexity is at most O(n log n)
 sort xs = ...
 ```
 
 note that in the above code, the two type signatures are present at the same time, and they do not interfere with each other.
 
-Given useful primitives, ime complexity can be inferred about a lot of day to day code. Where it can't be inferred, a type annotation can be done. Where it can be inferred, eg in `sort` above, we could say that the code infers to being `sort :: n -> O (n * n)` but it is specified to being `LessEqO (n * Log n)`, so compilation fails.
+Given useful primitives, ime complexity can be inferred about a lot of day to day code. Where it can't be inferred, a type annotation can be done. Where it can be inferred, eg in `sort` above, we could say that the code infers to being `sort :: n -> O (n * n)` but it is specified to being `LessEqO (n * Log n)`, so compilation fails, as desired.
 
 
 ## 2. What is the space complexity of the function?
@@ -191,13 +193,13 @@ parseCsv csvState char (CurrentField xs) = case csvState of
 
 ## Other examples
 
-Other examples include:
+Other examples of useful judgments about values include:
 
 4. Does the code ever touch the GPU?
 
 5. Does the code ever use a specific kind of cryptography?
 
-6. "This value and any value based off of it needs to be deleted after at most x seconds" (e.g. when processing a password, to prevent memory-dumping attacks).
+6. "This value and any value based off of it needs to be deleted after at most x seconds" - e.g. when processing a password, to prevent memory-dumping attacks; or when creating a streaming proxy, in order to make sure that dead cache does not remain in memory as a leak.
 
 7. "This is the layout of this value"
 
@@ -278,7 +280,7 @@ f a b = c where
   g a b c == True
 ```
 
-in the above code, `f a b` evaluates to such a value `c` that `g a b c` evaluates to `True`. It's not hard to infer the value when compiling because the logic here is so simple. It requires a symbolic representation of g, which the compiler already has anyways, so that's not an issue. The type of `f` can easily be inferred from its code.
+In the above code, `f a b` evaluates to such a value `c` that `g a b c` evaluates to `True`. It's not hard to infer the value when compiling because the logic here is so simple. It requires a symbolic representation of g, which the compiler already has anyways, so that's not an issue. The type of `f` can easily be inferred from its code.
 
 This can be extended to more logic functions, branches, case statements, and various other code that is in some way finite.
 
