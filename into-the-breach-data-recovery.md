@@ -454,4 +454,4 @@ A similar process can be used if you lose your Into The Breach save game, but yo
 
 # Issues
 
-I haven't found a way to restore the current pilot, but I'll keep on digging to see if there's any way to do that.
+If you want to restore your current pilot, you'll have to restore the save game, too. However, if you only lost your profile and not your save game, then your save game should still exist, and therefore your pilot should still be there as well.
