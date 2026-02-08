@@ -35,6 +35,14 @@ The next issue is trust collapse. A typical web of trust will be sparsely connec
 
 You probably want some sort of p2p network. Ultimately a cryptographically signed, unfalsifiable, immutable, public ledger of trust operations and trust violations holding history for every identity is going to be the optimum that everything will tend towards. Yes, one solution is a Merkle tree, no, it does not have to be a crypto coin, but yes, it could enable a developer economy where there doesn't exist one currently, but that's beside the point - the important part is immutability and public openness. With a full history of actions every entity can employ their own analysis algorithms in order to assess exposure and whether they do or do not want to interact with a (person, institution, ...) holding a certain identity.
 
+Examples:
+- a person might want to know that a person was vouched for by some bad actor they hate
+- another maintainer might just want to know that you've already previously committed to the Linux Kernel
+- another maintainer might want to see if your recent score has been dropping, and trigger manual review on your PRs, until a certain threshold, below which you are immediately denied creating PRs
+- another maintainer might say: I will only allow you to PR if you pay me whatever it costs of my time to review your PR
+- another maintainer might care less about your total aggregated trust core and might care more about the amount of trust violations to your account
+- another maintainer might care if you've been committing to a lot of things in a very short time (automated behavior)
+
 ## Some issues
 
 I think Mitchell Hashimoto created an interesting first step towards solving the problem. However, it has some issues. That is no slight, as what he built in a short while is a million times better than no one having built anything at all, but I can see some problems. I am 100% sure Mitchell will improve on his system, and I think discussing the issues is the first step towards that. However, ultimately, I envision a somewhat differently implemented system, which makes things more explicit.
