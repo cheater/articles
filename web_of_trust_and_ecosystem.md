@@ -67,5 +67,7 @@ An open source dev ecosystem could be built where webs of trust could be used to
 
 ## Aside
 
-I'm always open to work as a dev, IC, EM, or C-level, so if you think my ideas are good, drop me a note on my GH commit email or at https://twitter.com/PLT_cheater
+I'm always open to work as a dev, IC, EM, or C-level, so if you think my ideas are good, drop me a note at:
+- https://bsky.app/profile/cheater00.bsky.social
+- https://twitter.com/PLT_cheater
 
