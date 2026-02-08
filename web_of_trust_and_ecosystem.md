@@ -37,7 +37,7 @@ You probably want some sort of p2p network. Ultimately a cryptographically signe
 
 ## Some issues
 
-I think Mitchell Hashimoto created an interesting first step towards solving the problem. However, it has some issues. That is no slight, as what he built in 5 minutes is a million times better than no one having built anything at all, but I can see some problems immediately.
+I think Mitchell Hashimoto created an interesting first step towards solving the problem. However, it has some issues. That is no slight, as what he built in a short while is a million times better than no one having built anything at all, but I can see some problems. I am 100% sure Mitchell will improve on his system, and I think discussing the issues is the first step towards that. However, ultimately, I envision a somewhat differently implemented system, which makes things more explicit.
 
 - There is no interop, so you'll have to manually copy-paste allow/block lists between repositories, and it's all fragmented and will run out of sync and that's a pain
 - People will converge towards keeping shared block lists that anyone can end up on, which is essentially oracles, but they're not expressed explicitly as a first-class term in the system, they're instead an implicit process which is not introspectable (you can see the final block list, but have no idea how someone ended up there or why). While you can use other repositories' vouch lists, I have a feeling a lot of projects will be collating lists behind the scenes; meanwhile repositories that are used by a lot of third parties for vouch-import are essentially oracles without being given thought of their special role in the trust graph.
