@@ -1,4 +1,4 @@
-# Dev web of trust and ecosystem
+# Dev web of trust and ecosystem (including an analysis of Vouch)
 
 ## Where we are
 
