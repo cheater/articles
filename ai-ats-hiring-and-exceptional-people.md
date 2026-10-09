@@ -38,6 +38,12 @@ It isn't always known which specific LLM providers these companies use - but it'
 
 No matter which specific model any specific company uses, the issues listed below broadly apply to every LLM. To gauge the impact of the issues I'm describing here, it matters much less which LLM is used, and much more that an LLM is being used at all.
 
+Interestingly, after I first posted this article, someone made [the following comment](https://www.reddit.com/r/ExperiencedDevs/comments/1x1egqi/comment/petlx05/):
+
+> I can tell you firsthand that the prompt is a lot simpler than you would hope. Of course, we do "public bias audits" so everything is _totally_ kosher.
+
+The implied context is that the person works at an ATS company. Of course there's no proof, but it's from a community where this is at least probable.
+
 
 ## The issues cited by Claude and Gemini
 
