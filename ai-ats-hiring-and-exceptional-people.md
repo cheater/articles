@@ -22,10 +22,28 @@ This was always put in a completely new chat, with no custom config or history s
 
 I started with ChatGPT, which first scored me at <80% - to be fair, my old CV _was_ abysmal - it did not explain half the stuff I did properly, it was missing metrics and collaborations, it was incongruent and had way too much text in it; I slowly chiseled it to an astonishing 97-98/100 rating, "Recommendation: SCREEN — strong yes". Satisfied with myself, I went to Claude and Gemini, and asked them to do the same thing. To my utter disbelief, the CV was fully rejected: both rated it as "hold"; Claude at 60/100, and Gemini at an abysmal 15/100.
 
+Well, this would certainly explain the abysmal response rate I've had for a while now - ATSes have gone LLM.
+
+## So is this what ATS software has been doing?
+
+I thought it was widely known, but apparently it isn't - yes, ATS software uses LLMs to match your application to the job description. Here are some examples, but pretty much everyone is doing it now.
+
+- [Greenhouse](https://support.greenhouse.io/hc/en-us/articles/41131616864283-Talent-Matching-Data-Processing-FAQ#h_01K5A0X40DJCW4MSFNJTEW09HM)
+- [Workday](https://doc.workday.com/admin-guide/en-us/workday-ai/ai-data-contributions/reference--machine-learning-data-contributions.html)
+- [Ashby](https://www.ashbyhq.com/ai)
+- [SAP](https://help.sap.com/docs/successfactors-recruiting/setting-up-and-maintaining-sap-successfactors-recruiting/premium-ai-features-for-recruiting)
+- [Oracle](https://www.oracle.com/human-capital-management/ai-at-work/)
+
+It isn't always known which specific LLM providers these companies use - but it's clear that it's going to be one of the big ones especially given the VC dynamics happening around AI nowadays.
+
+No matter which specific model any specific company uses, the issues listed below broadly apply to every LLM. To gauge the impact of the issues I'm describing here, it matters much less which LLM is used, and much more that an LLM is being used at all.
+
+
+## The issues cited by Claude and Gemini
+
 There were several reasons cited by both LLMs for the low scores, but ultimately, the main reasoning was that neither AI could believe that I existed. I was, in essence, an "improbable person" - and therefore likely a fraud.
 
 I remove some personal info below, you'll see all-caps stand ins. I also use ellipses where I skip over parts that are less illustrative of the point.
-
 
 ## Time travel
 
