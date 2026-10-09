@@ -4,7 +4,7 @@ _Comments? Shoot me a line: damianjobsites at gmail_
 
 This article was written without the help, but due to the malignance, of AI.
 
-##TLDR
+## TLDR
 
 I believe that LLMs are unable to conceive of people as they exist in the real world, and AI ATS systems will stop you from hiring truly exceptional candidates. This situation also has implications towards AI safety.
 
