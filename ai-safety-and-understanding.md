@@ -9,10 +9,15 @@ For those who don't want to go to Twitter, it shows a slide by Terrence Tao that
 > A thought experiment on alignment and understanding
 > 
 > • Suppose an advanced Al is prompted to "find a cure for cancer that passes a stage 3 clinical trial".
+> 
 > • After a large amount of compute, it produces a cocktail of previously unknown chemicals which its mathematical model predicts, when mixed and injected into a patient, will kill all their cancer cells.
+> 
 > • While nobody truly knows how this cocktail was found, this model prediction is confirmed in Lean, and the cocktail indeed passes a stage 3 trial.
+> 
 > • Could the Al solution to the prompt be somehow misaligned by exploiting a weakness in the trial process?
+> 
 > • Before injecting this cocktail into your bloodstream, would you want to know that there is at least one human cancer expert who understands the mechanism behind this cure?
+> 
 > • Or a human mathematician who understands the mathematical model used to locate the cocktail?
 
 The comment was:
